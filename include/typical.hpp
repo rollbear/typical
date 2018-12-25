@@ -16,14 +16,14 @@ template<typename...>
 struct type_list {};
 
 template<typename F, typename ... Ts>
-using apply_pack = typename F::template f<Ts...>;
+using apply_pack = typename F::template result<Ts...>;
 
 template <typename F, typename T>
-using apply_one = typename F::template f<T>;
+using apply_one = typename F::template result<T>;
 
 struct identity {
   template<typename T>
-  using f = T;
+  using result = T;
 };
 
 template<typename T>
@@ -32,7 +32,7 @@ using identity_t = apply_one<identity, T>;
 template<template<typename ...> class C>
 struct make {
   template<typename ... T>
-  using f = C<T...>;
+  using result = C<T...>;
 };
 
 template <template <typename ...> class, typename, typename>
@@ -56,7 +56,7 @@ struct compose
   struct function
   {
     template <typename ... Ts>
-    using f = apply_pack<typename compose<Fs...>::template function<F<C>>, Ts...>;
+    using result = apply_pack<typename compose<Fs...>::template function<F<C>>, Ts...>;
   };
 };
 
@@ -75,7 +75,7 @@ struct bind_front {
     using type = T<Ts..., Vs...>;
   };
   template <typename ... Vs>
-  using f = typename helper<Vs...>::type;
+  using result = typename helper<Vs...>::type;
 };
 
 template<template<typename ...> class T, typename C = identity>
@@ -85,7 +85,7 @@ struct from_type {
     using type = typename T<Vs...>::type;
   };
   template<typename ... Vs>
-  using f = apply_one<C, typename helper<Vs...>::type>;
+  using result = apply_one<C, typename helper<Vs...>::type>;
 };
 
 template <typename T, T v>
@@ -105,7 +105,7 @@ template <template <typename ...> class T, typename C = identity>
 struct from_value
 {
   template <typename ... Vs>
-  using f = apply_one<C, constant<T<Vs...>::value>>;
+  using result = apply_one<C, constant<T<Vs...>::value>>;
 };
 
 template <typename C = identity>
@@ -136,7 +136,7 @@ template <typename C = identity>
 using remove_volatile = from_type<std::remove_volatile, C>;
 
 template <typename T, typename C = identity>
-using is_same = from_type<bind_front<std::is_same, T>::template f, C>;
+using is_same = from_type<bind_front<std::is_same, T>::template result, C>;
 
 template <typename C = identity>
 using is_pointer = from_value<std::is_pointer, C>;
@@ -167,13 +167,13 @@ struct is_template_t<T, T<Ts...>> : std::true_type {
 template<template<typename ...> class T, typename C = identity>
 struct is_template {
   template<typename U>
-  using f = apply_pack<C, constant<is_template_t<T, U>::value>>;
+  using result = apply_pack<C, constant<is_template_t<T, U>::value>>;
 };
 
 template<typename F, typename C = identity>
 struct negate {
   template<typename ...Ts>
-  using f = apply_pack<C, constant<!apply_pack<F, Ts...>::value>>;
+  using result = apply_pack<C, constant<!apply_pack<F, Ts...>::value>>;
 };
 
 
@@ -186,7 +186,7 @@ using remove_cv_ref = compose<remove_cv, remove_reference>::function<C>;
 template<typename F, typename C = make<type_list>>
 struct transform {
   template<typename ... Ts>
-  using f = apply_pack<C, apply_one<F,Ts>...>;
+  using result = apply_pack<C, apply_one<F,Ts>...>;
 };
 
 template <typename C = make<type_list>>
@@ -202,7 +202,7 @@ struct unwrap {
     using type = apply_pack<C, Ts...>;
   };
   template <typename ...Ts>
-  using f = typename helper<Ts...>::type;
+  using result = typename helper<Ts...>::type;
 };
 
 
@@ -213,7 +213,7 @@ struct compose<F>
   struct function
   {
     template <typename ... Ts>
-    using f = apply_pack<F<C>, Ts...>;
+    using result = apply_pack<F<C>, Ts...>;
   };
 };
 
@@ -222,7 +222,7 @@ template <template <typename ...> class C>
 struct metamorph
 {
   template <typename ... Ts>
-  using f = apply_pack<unwrap<make<C>>, Ts...>;
+  using result = apply_pack<unwrap<make<C>>, Ts...>;
 };
 
 template<typename L, template<typename ...> class D>
@@ -379,7 +379,7 @@ struct concat
     using type = typename helper<log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...,T9s...,T10s...,T11s...,T12s...,T13s...,T14s...,T15s...,T16s...,T17s...,T18s...,T19s...,T20s...,T21s...,T22s...,T23s...,T24s...,T25s...,T26s...,T27s...,T28s...,T29s...,T30s...,T31s...,T32s...,T33s...,T34s...,T35s...,T36s...,T37s...,T38s...,T39s...,T40s...,T41s...,T42s...,T43s...,T44s...,T45s...,T46s...,T47s...,T48s...,T49s...,T50s...,T51s...,T52s...,T53s...,T54s...,T50s...,T51s...,T52s...,T53s...,T54s...,T55s...,T56s...,T57s...,T58s...,T59s...,T60s...,T61s...,T62s...,T63s...,T64s...,T65s...,T66s...,T67s...,T68s...,T69s...,T70s...,T71s...,T72s...,T73s...,T74s...,T75s...,T76s...,T77s...,T78s...,T79s...,T80s...,T81s...,T82s...,T83s...,T84s...,T85s...,T86s...,T87s...,T88s...,T89s...,T90s...,T91s...,T92s...,T93s...,T94s...,T95s...,T96s...,T97s...,T98s...,T99s...,T100s...,T101s...,T102s...,T103s...,T104s...,T105s...,T106s...,T107s...,T108s...,T109s...,T110s...,T111s...,T112s...,T113s...,T114s...,T115s...,T116s...,T117s...,T118s...,T119s...,T120s...,T121s...,T122s...,T123s...,T124s...,T125s...,T126s...,T127s...,T128s...>, Tail...>::type;
   };
   template <typename ... Ts>
-  using f = typename helper<log2(sizeof...(Ts)), Ts...>::type;
+  using result = typename helper<log2(sizeof...(Ts)), Ts...>::type;
 };
 
 struct size {
@@ -390,7 +390,7 @@ struct size {
     static constexpr std::size_t value = sizeof...(Ts);
   };
   template<typename T>
-  using f = constant<helper<T>::value>;
+  using result = constant<helper<T>::value>;
 };
 
 
@@ -404,7 +404,7 @@ struct zip {
     using type = apply_pack<C, apply_pack<F, L1s, L2s>...>;
   };
   template<typename L1, typename L2>
-  using f = typename helper<L1, L2>::type;
+  using result = typename helper<L1, L2>::type;
 };
 
 template<typename L1, typename L2, typename F, typename C = make<type_list>>
@@ -414,13 +414,13 @@ using zip_t = apply_pack<zip<F, C>, L1, L2>;
 template<bool>
 struct conditional {
   template<typename T, typename>
-  using f = T;
+  using result = T;
 };
 
 template<>
 struct conditional<false> {
   template<typename, typename U>
-  using f = U;
+  using result = U;
 };
 
 template<bool b, typename T, typename U>
@@ -430,7 +430,7 @@ template<typename P, typename C = make<type_list>>
 struct filter
 {
   template <typename ... Ts>
-  using f = apply_pack<concat<C>, conditional_t<apply_one<P,Ts>::value,type_list<Ts>, type_list<>>...>;
+  using result = apply_pack<concat<C>, conditional_t<apply_one<P,Ts>::value,type_list<Ts>, type_list<>>...>;
 };
 
 
@@ -453,7 +453,7 @@ struct drop_first
        static apply_pack<C, T...> func(V..., wrapped<T>*...);
     };
     template <typename ... Ts>
-    using f = decltype(drop_first_<make_n<type_list, N::value, const void*>>::func(static_cast<wrapped<Ts>*>(nullptr)...));
+    using result = decltype(drop_first_<make_n<type_list, N::value, const void*>>::func(static_cast<wrapped<Ts>*>(nullptr)...));
 };
 
 
@@ -466,7 +466,7 @@ struct partition {
       apply_pack<concat<make<type_list>>, conditional_t<apply_pack<P, Ts>::value, type_list<>, type_list<Ts>>...>>;
   };
   template<typename ... Ts>
-  using f = typename helper<Ts...>::type;
+  using result = typename helper<Ts...>::type;
 };
 
 
@@ -476,7 +476,7 @@ struct front {
   template <typename T>
   static apply_one<C, T> func(wrapped<T>*,...);
   template <typename ... T>
-  using f = decltype(func(static_cast<wrapped<T>*>(nullptr)...));
+  using result = decltype(func(static_cast<wrapped<T>*>(nullptr)...));
 };
 
 
@@ -485,7 +485,7 @@ struct count_if {
   template <typename T>
   using eval = apply_one<P, T>;
   template<typename ...T>
-  using f = apply_pack<C, constant<(eval<T>::value + ... + 0)>>;
+  using result = apply_pack<C, constant<(eval<T>::value + ... + 0)>>;
 };
 
 template<typename P, typename L, typename C = identity>
@@ -498,13 +498,13 @@ constexpr inline auto count_if_v = count_if_t<P, L>::value;
 template<typename P, typename C = identity>
 struct any_of {
   template<typename ...Ts>
-  using f = apply_pack<C, constant<std::disjunction_v<apply_one<P,Ts>...>>>;
+  using result = apply_pack<C, constant<std::disjunction_v<apply_one<P,Ts>...>>>;
 };
 
 template<typename P, typename C = identity>
 struct all_of {
   template<typename ... Ts>
-  using f = apply_pack<C, constant<std::conjunction_v<apply_one<P,Ts>...>>>;
+  using result = apply_pack<C, constant<std::conjunction_v<apply_one<P,Ts>...>>>;
 };
 
 template<typename P, typename C = identity>
@@ -516,14 +516,14 @@ template <typename N, typename C = identity>
 struct nth_type
 {
   template <typename ...Ts>
-  using f = apply_pack<drop_first<N, front<C>>, Ts...>;
+  using result = apply_pack<drop_first<N, front<C>>, Ts...>;
 };
 
 template <typename C>
 struct nth_type<constant<0>, C>
 {
   template <typename T, typename ...>
-  using f = apply_one<C, T>;
+  using result = apply_one<C, T>;
 };
 
 template<typename C = make<type_list>>
@@ -588,7 +588,7 @@ struct reverse
     using type = apply_pack<concat<C>, typename helper<N-10, L<Ts...>>::type, L<T10, T9, T8, T7, T6, T5, T4, T3, T2, T1>>;
   };
   template <typename ...T>
-  using f = typename helper<sizeof...(T), apply_pack<C,T...>>::type;
+  using result = typename helper<sizeof...(T), apply_pack<C,T...>>::type;
 };
 
 template <typename C = make<type_list>>
@@ -610,7 +610,7 @@ struct flatten
     using type = apply_pack<concat<C>, typename split<Ts>::type...>;
   };
   template <typename T>
-  using f = typename helper<T>::type;
+  using result = typename helper<T>::type;
 };
 
 }

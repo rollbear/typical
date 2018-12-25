@@ -170,7 +170,7 @@ static_assert(apply_pack<typical::size, std::variant<int,char,bool>>::value == 3
 struct make_pair
 {
   template <typename T, typename U>
-  using f = std::pair<T,U>;
+  using result = std::pair<T,U>;
 };
 
 
