@@ -191,6 +191,7 @@ static_assert(std::is_same_v<apply<typical::count_if<typical::is_reference<>>,in
 static_assert(std::is_same_v<apply<typical::count_if<typical::is_same<int>>,int,int*,void*,double>,
   typical::constant<1>>);
 
+
 static_assert(std::is_same_v<apply<typical::any_of<typical::is_reference<>>, int,int,double,char>,
   typical::constant<false>>);
 static_assert(std::is_same_v<apply<typical::any_of<typical::is_reference<>>, int,int&,double,char>,

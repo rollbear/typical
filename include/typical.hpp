@@ -572,8 +572,10 @@ struct front {
 
 template<typename P, typename C = identity>
 struct count_if {
+  template <typename T>
+  using eval = typename P::template f<T>;
   template<typename ...T>
-  using f = apply<C, constant<(apply<P, T>::value + ... + 0)>>;
+  using f = apply<C, constant<(eval<T>::value + ... + 0)>>;
 };
 
 template<typename P, typename L, typename C = identity>
