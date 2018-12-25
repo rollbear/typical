@@ -449,13 +449,10 @@ struct partition {
 
 template <typename C = identity>
 struct front {
-  template <typename T, typename ...>
-  struct helper
-  {
-    using type = apply_pack<C, T>;
-  };
-  template<typename ... Ts>
-  using f = typename helper<Ts...>::type;
+  template <typename T>
+  static apply_one<C, T> func(wrapped<T>*,...);
+  template <typename ... T>
+  using f = decltype(func(static_cast<wrapped<T>*>(nullptr)...));
 };
 
 
@@ -501,8 +498,8 @@ struct nth_type
 template <typename C>
 struct nth_type<constant<0>, C>
 {
-  template <typename ... Ts>
-  using f = apply_pack<front<C>, Ts...>;
+  template <typename T, typename ...>
+  using f = apply_one<C, T>;
 };
 
 template<typename C = make<type_list>>
