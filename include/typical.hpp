@@ -13,7 +13,7 @@ static constexpr unsigned log2(unsigned n, unsigned b=16)
 }
 
 template<typename...>
-struct type_list {};
+struct list {};
 
 template<typename F, typename ... Ts>
 using apply_pack = typename F::template result<Ts...>;
@@ -52,7 +52,7 @@ using make_n = typename make_n_<C, T, std::make_index_sequence<N>>::type;
 template <template <typename> class F, template <typename> class ... Fs>
 struct compose
 {
-  template <typename C = make<type_list>>
+  template <typename C = make<list>>
   struct function
   {
     template <typename ... Ts>
@@ -183,13 +183,13 @@ using remove_cv = compose<remove_volatile,remove_const>::function<C>;
 template <typename C = identity>
 using remove_cv_ref = compose<remove_cv, remove_reference>::function<C>;
 
-template<typename F, typename C = make<type_list>>
+template<typename F, typename C = make<list>>
 struct transform {
   template<typename ... Ts>
   using result = apply_pack<C, apply_one<F,Ts>...>;
 };
 
-template <typename C = make<type_list>>
+template <typename C = make<list>>
 struct unwrap {
   template <typename T>
   struct helper
@@ -209,7 +209,7 @@ struct unwrap {
 template <template <typename> class F>
 struct compose<F>
 {
-  template <typename C = make<type_list>>
+  template <typename C = make<list>>
   struct function
   {
     template <typename ... Ts>
@@ -229,7 +229,7 @@ template<typename L, template<typename ...> class D>
 using metamorph_t = apply_pack<metamorph<D>, L>;
 
 
-template <typename C = make<type_list>>
+template <typename C = make<list>>
 struct concat
 {
   template <int N, typename ...Ts>
@@ -394,7 +394,7 @@ struct size {
 };
 
 
-template<typename F, typename C = make<type_list>>
+template<typename F, typename C = make<list>>
 struct zip {
   template<typename L1, typename L2>
   struct helper;
@@ -407,7 +407,7 @@ struct zip {
   using result = typename helper<L1, L2>::type;
 };
 
-template<typename L1, typename L2, typename F, typename C = make<type_list>>
+template<typename L1, typename L2, typename F, typename C = make<list>>
 using zip_t = apply_pack<zip<F, C>, L1, L2>;
 
 
@@ -426,11 +426,11 @@ struct conditional<false> {
 template<bool b, typename T, typename U>
 using conditional_t = apply_pack<conditional<b>, T, U>;
 
-template<typename P, typename C = make<type_list>>
+template<typename P, typename C = make<list>>
 struct filter
 {
   template <typename ... Ts>
-  using result = apply_pack<concat<C>, conditional_t<apply_one<P,Ts>::value,type_list<Ts>, type_list<>>...>;
+  using result = apply_pack<concat<C>, conditional_t<apply_one<P,Ts>::value,list<Ts>, list<>>...>;
 };
 
 
@@ -441,29 +441,29 @@ using filter_t = apply_pack<filter<P>, L>;
 template <typename T>
 struct wrapped;
 
-template <typename N, typename C = make<type_list>>
+template <typename N, typename C = make<list>>
 struct drop_first
 {
     template <typename>
     struct drop_first_;
     template <typename ... V>
-    struct drop_first_<type_list<V...>>
+    struct drop_first_<list<V...>>
     {
        template <typename ... T>
        static apply_pack<C, T...> func(V..., wrapped<T>*...);
     };
     template <typename ... Ts>
-    using result = decltype(drop_first_<make_n<type_list, N::value, const void*>>::func(static_cast<wrapped<Ts>*>(nullptr)...));
+    using result = decltype(drop_first_<make_n<list, N::value, const void*>>::func(static_cast<wrapped<Ts>*>(nullptr)...));
 };
 
 
-template<typename P, typename C = make<type_list>>
+template<typename P, typename C = make<list>>
 struct partition {
   template <typename ... Ts>
   struct helper
   {
-    using type = apply_pack<C, apply_pack<concat<make<type_list>>,conditional_t<apply_pack<P, Ts>::value, type_list<Ts>, type_list<>>...>,
-      apply_pack<concat<make<type_list>>, conditional_t<apply_pack<P, Ts>::value, type_list<>, type_list<Ts>>...>>;
+    using type = apply_pack<C, apply_pack<concat<make<list>>,conditional_t<apply_pack<P, Ts>::value, list<Ts>, list<>>...>,
+      apply_pack<concat<make<list>>, conditional_t<apply_pack<P, Ts>::value, list<>, list<Ts>>...>>;
   };
   template<typename ... Ts>
   using result = typename helper<Ts...>::type;
@@ -526,7 +526,7 @@ struct nth_type<constant<0>, C>
   using result = apply_one<C, T>;
 };
 
-template<typename C = make<type_list>>
+template<typename C = make<list>>
 struct reverse
 {
   template <std::size_t N, typename, bool = (N >= 10)>
@@ -591,7 +591,7 @@ struct reverse
   using result = typename helper<sizeof...(T), apply_pack<C,T...>>::type;
 };
 
-template <typename C = make<type_list>>
+template <typename C = make<list>>
 struct flatten
 {
   template <typename T>
