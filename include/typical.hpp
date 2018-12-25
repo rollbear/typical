@@ -482,10 +482,13 @@ struct front {
 
 template<typename P, typename C = identity>
 struct count_if {
+  template <auto ... I>
+  static constexpr auto sum = (...  + I);
+
   template <typename T>
   using eval = apply_one<P, T>;
   template<typename ...T>
-  using result = apply_pack<C, constant<(eval<T>::value + ... + 0)>>;
+  using result = apply_pack<C, constant<sum<eval<T>::value...>>>;
 };
 
 template<typename P, typename L, typename C = identity>
