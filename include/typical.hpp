@@ -49,6 +49,17 @@ struct make_n_<C, T, std::index_sequence<I...>>
 template <template <typename ...> class C, std::size_t N, typename T>
 using make_n = typename make_n_<C, T, std::make_index_sequence<N>>::type;
 
+template <template <typename> class F, template <typename> class ... Fs>
+struct compose
+{
+  template <typename C = make<type_list>>
+  struct function
+  {
+    template <typename ... Ts>
+    using f = apply_pack<typename compose<Fs...>::template function<F<C>>, Ts...>;
+  };
+};
+
 
 template<typename T>
 struct identity_template;
@@ -167,10 +178,10 @@ struct negate {
 
 
 template <typename C = identity>
-using remove_cv = remove_volatile<remove_const<C>>;
+using remove_cv = compose<remove_volatile,remove_const>::function<C>;
 
 template <typename C = identity>
-using remove_cv_ref = remove_cv<remove_reference<C>>;
+using remove_cv_ref = compose<remove_cv, remove_reference>::function<C>;
 
 template<typename F, typename C = make<type_list>>
 struct transform {
@@ -193,6 +204,19 @@ struct unwrap {
   template <typename ...Ts>
   using f = typename helper<Ts...>::type;
 };
+
+
+template <template <typename> class F>
+struct compose<F>
+{
+  template <typename C = make<type_list>>
+  struct function
+  {
+    template <typename ... Ts>
+    using f = apply_pack<F<C>, Ts...>;
+  };
+};
+
 
 template <template <typename ...> class C>
 struct metamorph

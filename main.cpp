@@ -51,9 +51,8 @@ static_assert(apply_pack<typical::negate<typical::is_same<int>>, char>::value);
 static_assert(!apply_pack<typical::negate<typical::is_same<int>>, int>::value);
 template <typename...>
 struct S;//{S() = delete;};
-//S<apply_pack<typical::compose<typical::add_const, typical::add_pointer, typical::add_volatile>::type<typical::identity>, int>> s;
 
-static_assert(std::is_same_v<apply_one<typical::add_volatile<typical::add_pointer<typical::add_const<>>>, int>,
+static_assert(std::is_same_v<apply_one<typical::compose<typical::add_const, typical::add_pointer, typical::add_volatile>::function<typical::identity>, int>,
               int volatile * const>);
 
 static_assert(std::is_same_v<apply_pack<typical::remove_cv<>, const int volatile>, int>);
