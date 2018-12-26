@@ -236,7 +236,7 @@ using metamorph_t = apply_pack<metamorph<D>, L>;
 
 
 template <typename C = make<list>>
-struct concat
+struct join
 {
   template <int N, typename ...Ts>
   struct helper
@@ -436,7 +436,7 @@ template<typename P, typename C = make<list>>
 struct filter
 {
   template <typename ... Ts>
-  using result = apply_pack<concat<C>, conditional_t<apply_one<P,Ts>::value,list<Ts>, list<>>...>;
+  using result = apply_pack<join<C>, conditional_t<apply_one<P,Ts>::value,list<Ts>, list<>>...>;
 };
 
 
@@ -445,28 +445,27 @@ template<typename P, typename L>
 using filter_t = apply_pack<filter<P>, L>;
 
 template <typename N, typename C = make<list>>
-struct drop_first
+struct drop_front
 {
     template <typename>
-    struct drop_first_;
+    struct helper;
     template <typename ... V>
-    struct drop_first_<list<V...>>
+    struct helper<list<V...>>
     {
        template <typename ... T>
        static apply_pack<C, T...> func(V..., detail::proxy<T>*...);
     };
     template <typename ... Ts>
-    using result = decltype(drop_first_<make_n<list, N, const void*>>::func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+    using result = decltype(helper<make_n<list, N, const void*>>::func(static_cast<detail::proxy<Ts>*>(nullptr)...));
 };
-
 
 template<typename P, typename C = make<list>>
 struct partition {
   template <typename ... Ts>
   struct helper
   {
-    using type = apply_pack<C, apply_pack<concat<make<list>>,conditional_t<apply_pack<P, Ts>::value, list<Ts>, list<>>...>,
-      apply_pack<concat<make<list>>, conditional_t<apply_pack<P, Ts>::value, list<>, list<Ts>>...>>;
+    using type = apply_pack<C, apply_pack<join<make<list>>,conditional_t<apply_pack<P, Ts>::value, list<Ts>, list<>>...>,
+      apply_pack<join<make<list>>, conditional_t<apply_pack<P, Ts>::value, list<>, list<Ts>>...>>;
   };
   template<typename ... Ts>
   using result = typename helper<Ts...>::type;
@@ -517,14 +516,14 @@ template<typename P, typename C = identity>
 using none_of = negate<any_of<P>, C>;
 
 template <typename N, typename C = identity>
-struct nth_type
+struct at
 {
   template <typename ...Ts>
-  using result = apply_pack<drop_first<N, front<C>>, Ts...>;
+  using result = apply_pack<drop_front<N, front<C>>, Ts...>;
 };
 
 template <typename C>
-struct nth_type<constant<0>, C>
+struct at<constant<0>, C>
 {
   template <typename T, typename ...>
   using result = apply_one<C, T>;
@@ -589,7 +588,7 @@ struct reverse
   template <std::size_t N, template <typename ...> class L, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename ... Ts>
   struct helper<N, L<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, Ts...>, true>
   {
-    using type = apply_pack<concat<C>, typename helper<N-10, L<Ts...>>::type, L<T10, T9, T8, T7, T6, T5, T4, T3, T2, T1>>;
+    using type = apply_pack<join<C>, typename helper<N-10, L<Ts...>>::type, L<T10, T9, T8, T7, T6, T5, T4, T3, T2, T1>>;
   };
   template <typename ...T>
   using result = typename helper<sizeof...(T), apply_pack<C,T...>>::type;
@@ -609,9 +608,9 @@ struct flatten
     };
     template <typename ... Vs>
     struct split<L<Vs...>>{
-      using type = apply_pack<concat<C>,typename split<Vs>::type...>;
+      using type = apply_pack<join<C>,typename split<Vs>::type...>;
     };
-    using type = apply_pack<concat<C>, typename split<Ts>::type...>;
+    using type = apply_pack<join<C>, typename split<Ts>::type...>;
   };
   template <typename T>
   using result = typename helper<T>::type;
