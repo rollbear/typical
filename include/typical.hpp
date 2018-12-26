@@ -120,6 +120,18 @@ using constant = typed_constant<std::remove_cv_t<decltype(V)>, V>;
 template<auto V>
 inline constexpr auto constant_v = constant<V>::value;
 
+template <typename C = identity>
+struct is_empty
+{
+  template <typename>
+  struct helper { static constexpr bool value = false;};
+  template <template <typename...> class L>
+  struct helper<L<>> { static constexpr bool value = true;};
+  template <typename ... Vs>
+  using result = apply_one<C, constant<helper<Vs...>::value>>;
+};
+
+
 template <template <typename ...> class T, typename C = identity>
 struct from_value
 {

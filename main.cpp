@@ -49,6 +49,16 @@ static_assert(!apply_pack<typical::is_template<std::variant>, std::tuple<int,cha
 
 static_assert(apply_pack<typical::negate<typical::is_same<int>>, char>::value);
 static_assert(!apply_pack<typical::negate<typical::is_same<int>>, int>::value);
+
+static_assert(std::is_same_v<apply_pack<typical::is_empty<>, typical::list<>>,
+  typical::constant<true>>);
+static_assert(std::is_same_v<apply_pack<typical::is_empty<>, std::tuple<>>,
+  typical::constant<true>>);
+static_assert(std::is_same_v<apply_pack<typical::is_empty<>, typical::list<int>>,
+  typical::constant<false>>);
+static_assert(std::is_same_v<apply_pack<typical::is_empty<>, std::tuple<bool>>,
+  typical::constant<false>>);
+
 template <typename...>
 struct S;//{S() = delete;};
 
@@ -260,6 +270,7 @@ static_assert(std::is_same_v<apply_pack<typical::reverse<>, c<1>,c<2>,c<3>,c<4>,
 static_assert(std::is_same_v<apply_pack<typical::flatten<>,
   typical::list<c<1>,c<2>,typical::list<c<3>, c<4>, typical::list<c<5>, c<6>>>,std::tuple<c<7>, c<8>, typical::list<c<9>,c<10>>>,typical::list<c<11>,typical::list<c<12>,typical::list<c<13>>>>>>,
   typical::list<c<1>,c<2>,c<3>,c<4>,c<5>,c<6>,std::tuple<c<7>,c<8>,typical::list<c<9>,c<10>>>,c<11>,c<12>,c<13>>>);
+
 
 //S<apply_pack<typical::drop_front<typical::constant<5>>, c<1>, c<2>, c<3>, c<4>>> s;
 //S<std::common_type_t<apply_pack<typical::transform<typical::inner_type<>>>, typical::list<typical::enumerated<1,int>, typical::enumerated<2,void>>>>> s;
