@@ -3,13 +3,20 @@
 
 #include <type_traits>
 #include <utility>
+
 namespace typical {
 
-static constexpr unsigned log2(unsigned n, unsigned b=16)
+namespace detail {
+static constexpr unsigned log2(unsigned n, unsigned b = 16)
 {
   if (n <= 1) return 0;
-  const auto hm = ~((1U << b)-1U);
-  return n & hm ? b+log2(n>>b, b>>1) : log2(n, b>>1);
+  const auto hm = ~((1U << b) - 1U);
+  return n & hm ? b + detail::log2(n >> b, b >> 1) : detail::log2(n, b >> 1);
+}
+
+template <typename T>
+struct proxy;
+
 }
 
 template<typename...>
@@ -35,19 +42,21 @@ struct make {
   using result = C<T...>;
 };
 
-template <template <typename ...> class, typename, typename>
-struct make_n_;
+namespace detail {
 
-template <template <typename ...> class C, typename T, std::size_t ... I>
-struct make_n_<C, T, std::index_sequence<I...>>
-{
-  template <std::size_t>
+template<template<typename ...> class, typename, typename>
+struct make_n;
+
+template<template<typename ...> class C, typename T, std::size_t ... I>
+struct make_n<C, T, std::index_sequence<I...>> {
+  template<std::size_t>
   using made = T;
   using type = C<made<I>...>;
 };
 
-template <template <typename ...> class C, std::size_t N, typename T>
-using make_n = typename make_n_<C, T, std::make_index_sequence<N>>::type;
+}
+template <template <typename ...> class C, typename N, typename T>
+using make_n = typename detail::make_n<C, T, std::make_index_sequence<N::value>>::type;
 
 template <template <typename> class F, template <typename> class ... Fs>
 struct compose
@@ -60,6 +69,16 @@ struct compose
   };
 };
 
+template <template <typename> class F>
+struct compose<F>
+{
+  template <typename C = make<list>>
+  struct function
+  {
+    template <typename ... Ts>
+    using result = apply_pack<F<C>, Ts...>;
+  };
+};
 
 template<typename T>
 struct identity_template;
@@ -205,19 +224,6 @@ struct unwrap {
   using result = typename helper<Ts...>::type;
 };
 
-
-template <template <typename> class F>
-struct compose<F>
-{
-  template <typename C = make<list>>
-  struct function
-  {
-    template <typename ... Ts>
-    using result = apply_pack<F<C>, Ts...>;
-  };
-};
-
-
 template <template <typename ...> class C>
 struct metamorph
 {
@@ -251,19 +257,19 @@ struct concat
   template <template<typename...> class L, typename ...T1s, typename ...T2s, typename ... Tail>
   struct helper<1, L<T1s...>, L<T2s...>, Tail...>
   {
-    using type = typename helper<log2(sizeof...(Tail)+1), L<T1s...,T2s...>, Tail...>::type;
+    using type = typename helper<detail::log2(sizeof...(Tail)+1), L<T1s...,T2s...>, Tail...>::type;
   };
   template <template<typename...> class L, typename ...T1s, typename ...T2s, typename ...T3s, typename ...T4s, typename ... Tail>
   struct helper<2, L<T1s...>, L<T2s...>, L<T3s...>, L<T4s...>, Tail...>
   {
-    using type = typename helper<log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...>, Tail...>::type;
+    using type = typename helper<detail::log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...>, Tail...>::type;
   };
   template <template<typename...> class L, typename ...T1s, typename ...T2s, typename ...T3s, typename ...T4s,
     typename ...T5s, typename ...T6s,typename...T7s,typename ...T8s,typename ... Tail>
   struct helper<3, L<T1s...>, L<T2s...>, L<T3s...>, L<T4s...>,L<T5s...>,L<T6s...>,L<T7s...>,L<T8s...>,
     Tail...>
   {
-    using type = typename helper<log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...>, Tail...>::type;
+    using type = typename helper<detail::log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...>, Tail...>::type;
   };
   template <template<typename...> class L,
     typename ...T1s, typename ...T2s, typename ...T3s, typename ...T4s,
@@ -274,7 +280,7 @@ struct concat
     L<T9s...>,L<T10s...>,L<T11s...>,L<T12s...>,L<T13s...>,L<T14s...>,L<T15s...>,L<T16s...>,
     Tail...>
   {
-    using type = typename helper<log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...,T9s...,T10s...,T11s...,T12s...,T13s...,T14s...,T15s...,T16s...>, Tail...>::type;
+    using type = typename helper<detail::log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...,T9s...,T10s...,T11s...,T12s...,T13s...,T14s...,T15s...,T16s...>, Tail...>::type;
   };
   template <template<typename...> class L,
     typename ...T1s, typename ...T2s, typename ...T3s, typename ...T4s,
@@ -292,7 +298,7 @@ struct concat
     L<T25s...>,L<T26s...>,L<T27s...>,L<T28s...>,L<T29s...>,L<T30s...>,L<T31s...>,L<T32s...>,
     Tail...>
   {
-    using type = typename helper<log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...,T9s...,T10s...,T11s...,T12s...,T13s...,T14s...,T15s...,T16s...,T17s...,T18s...,T19s...,T20s...,T21s...,T22s...,T23s...,T24s...,T25s...,T26s...,T27s...,T28s...,T29s...,T30s...,T31s...,T32s...>, Tail...>::type;
+    using type = typename helper<detail::log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...,T9s...,T10s...,T11s...,T12s...,T13s...,T14s...,T15s...,T16s...,T17s...,T18s...,T19s...,T20s...,T21s...,T22s...,T23s...,T24s...,T25s...,T26s...,T27s...,T28s...,T29s...,T30s...,T31s...,T32s...>, Tail...>::type;
   };
   template <template<typename...> class L,
     typename ...T1s, typename ...T2s, typename ...T3s, typename ...T4s,
@@ -322,7 +328,7 @@ struct concat
     L<T57s...>,L<T58s...>,L<T59s...>,L<T60s...>,L<T61s...>,L<T62s...>,L<T63s...>,L<T64s...>,
     Tail...>
   {
-    using type = typename helper<log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...,T9s...,T10s...,T11s...,T12s...,T13s...,T14s...,T15s...,T16s...,T17s...,T18s...,T19s...,T20s...,T21s...,T22s...,T23s...,T24s...,T25s...,T26s...,T27s...,T28s...,T29s...,T30s...,T31s...,T32s...,T33s...,T34s...,T35s...,T36s...,T37s...,T38s...,T39s...,T40s...,T41s...,T42s...,T43s...,T44s...,T45s...,T46s...,T47s...,T48s...,T49s...,T50s...,T51s...,T52s...,T53s...,T54s...,T50s...,T51s...,T52s...,T53s...,T54s...,T55s...,T56s...,T57s...,T58s...,T59s...,T60s...,T61s...,T62s...,T63s...,T64s...>, Tail...>::type;
+    using type = typename helper<detail::log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...,T9s...,T10s...,T11s...,T12s...,T13s...,T14s...,T15s...,T16s...,T17s...,T18s...,T19s...,T20s...,T21s...,T22s...,T23s...,T24s...,T25s...,T26s...,T27s...,T28s...,T29s...,T30s...,T31s...,T32s...,T33s...,T34s...,T35s...,T36s...,T37s...,T38s...,T39s...,T40s...,T41s...,T42s...,T43s...,T44s...,T45s...,T46s...,T47s...,T48s...,T49s...,T50s...,T51s...,T52s...,T53s...,T54s...,T50s...,T51s...,T52s...,T53s...,T54s...,T55s...,T56s...,T57s...,T58s...,T59s...,T60s...,T61s...,T62s...,T63s...,T64s...>, Tail...>::type;
   };
   template <int N, template<typename...> class L,
     typename ...T1s,  typename ...T2s,  typename ... T3s, typename ...T4s,
@@ -376,10 +382,10 @@ struct concat
     L<T120s...>,L<T121s...>,L<T122s...>,L<T123s...>,L<T124s...>,L<T125s...>,L<T126s...>,L<T127s...>,
     L<T128s...>,Tail...>
   {
-    using type = typename helper<log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...,T9s...,T10s...,T11s...,T12s...,T13s...,T14s...,T15s...,T16s...,T17s...,T18s...,T19s...,T20s...,T21s...,T22s...,T23s...,T24s...,T25s...,T26s...,T27s...,T28s...,T29s...,T30s...,T31s...,T32s...,T33s...,T34s...,T35s...,T36s...,T37s...,T38s...,T39s...,T40s...,T41s...,T42s...,T43s...,T44s...,T45s...,T46s...,T47s...,T48s...,T49s...,T50s...,T51s...,T52s...,T53s...,T54s...,T50s...,T51s...,T52s...,T53s...,T54s...,T55s...,T56s...,T57s...,T58s...,T59s...,T60s...,T61s...,T62s...,T63s...,T64s...,T65s...,T66s...,T67s...,T68s...,T69s...,T70s...,T71s...,T72s...,T73s...,T74s...,T75s...,T76s...,T77s...,T78s...,T79s...,T80s...,T81s...,T82s...,T83s...,T84s...,T85s...,T86s...,T87s...,T88s...,T89s...,T90s...,T91s...,T92s...,T93s...,T94s...,T95s...,T96s...,T97s...,T98s...,T99s...,T100s...,T101s...,T102s...,T103s...,T104s...,T105s...,T106s...,T107s...,T108s...,T109s...,T110s...,T111s...,T112s...,T113s...,T114s...,T115s...,T116s...,T117s...,T118s...,T119s...,T120s...,T121s...,T122s...,T123s...,T124s...,T125s...,T126s...,T127s...,T128s...>, Tail...>::type;
+    using type = typename helper<detail::log2(sizeof...(Tail)+1), L<T1s...,T2s...,T3s..., T4s...,T5s...,T6s...,T7s...,T8s...,T9s...,T10s...,T11s...,T12s...,T13s...,T14s...,T15s...,T16s...,T17s...,T18s...,T19s...,T20s...,T21s...,T22s...,T23s...,T24s...,T25s...,T26s...,T27s...,T28s...,T29s...,T30s...,T31s...,T32s...,T33s...,T34s...,T35s...,T36s...,T37s...,T38s...,T39s...,T40s...,T41s...,T42s...,T43s...,T44s...,T45s...,T46s...,T47s...,T48s...,T49s...,T50s...,T51s...,T52s...,T53s...,T54s...,T50s...,T51s...,T52s...,T53s...,T54s...,T55s...,T56s...,T57s...,T58s...,T59s...,T60s...,T61s...,T62s...,T63s...,T64s...,T65s...,T66s...,T67s...,T68s...,T69s...,T70s...,T71s...,T72s...,T73s...,T74s...,T75s...,T76s...,T77s...,T78s...,T79s...,T80s...,T81s...,T82s...,T83s...,T84s...,T85s...,T86s...,T87s...,T88s...,T89s...,T90s...,T91s...,T92s...,T93s...,T94s...,T95s...,T96s...,T97s...,T98s...,T99s...,T100s...,T101s...,T102s...,T103s...,T104s...,T105s...,T106s...,T107s...,T108s...,T109s...,T110s...,T111s...,T112s...,T113s...,T114s...,T115s...,T116s...,T117s...,T118s...,T119s...,T120s...,T121s...,T122s...,T123s...,T124s...,T125s...,T126s...,T127s...,T128s...>, Tail...>::type;
   };
   template <typename ... Ts>
-  using result = typename helper<log2(sizeof...(Ts)), Ts...>::type;
+  using result = typename helper<detail::log2(sizeof...(Ts)), Ts...>::type;
 };
 
 struct size {
@@ -438,9 +444,6 @@ struct filter
 template<typename P, typename L>
 using filter_t = apply_pack<filter<P>, L>;
 
-template <typename T>
-struct wrapped;
-
 template <typename N, typename C = make<list>>
 struct drop_first
 {
@@ -450,10 +453,10 @@ struct drop_first
     struct drop_first_<list<V...>>
     {
        template <typename ... T>
-       static apply_pack<C, T...> func(V..., wrapped<T>*...);
+       static apply_pack<C, T...> func(V..., detail::proxy<T>*...);
     };
     template <typename ... Ts>
-    using result = decltype(drop_first_<make_n<list, N::value, const void*>>::func(static_cast<wrapped<Ts>*>(nullptr)...));
+    using result = decltype(drop_first_<make_n<list, N, const void*>>::func(static_cast<detail::proxy<Ts>*>(nullptr)...));
 };
 
 
@@ -474,9 +477,9 @@ struct partition {
 template <typename C = identity>
 struct front {
   template <typename T>
-  static apply_one<C, T> func(wrapped<T>*,...);
+  static apply_one<C, T> func(detail::proxy<T>*,...);
   template <typename ... T>
-  using result = decltype(func(static_cast<wrapped<T>*>(nullptr)...));
+  using result = decltype(func(static_cast<detail::proxy<T>*>(nullptr)...));
 };
 
 
@@ -512,8 +515,6 @@ struct all_of {
 
 template<typename P, typename C = identity>
 using none_of = negate<any_of<P>, C>;
-
-
 
 template <typename N, typename C = identity>
 struct nth_type
