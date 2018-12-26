@@ -471,6 +471,55 @@ struct drop_front
     using result = decltype(helper<make_n<list, N, const void*>>::func(static_cast<detail::proxy<Ts>*>(nullptr)...));
 };
 
+template <typename N, typename C = make<list>>
+struct take
+{
+  template <std::size_t I, std::size_t L, bool,typename ...>
+  struct helper;
+
+  template <typename ... Ts>
+  struct helper<0, 0, false,Ts...>
+  {
+    using type = list<>;
+  };
+
+  template <typename T, typename ... Ts>
+  struct helper<1, 0, false,T, Ts...>
+  {
+    using type = list<T>;
+  };
+  template <std::size_t I, typename T0, typename T1, typename ... Ts>
+  struct helper<I,1, false,T0, T1, Ts...>
+  {
+    using type = apply_pack<join<>,list<T0,T1>, typename helper<I-2, detail::log2(I-2), false,Ts...>::type>;
+  };
+  template <std::size_t I, typename T0, typename T1, typename T2, typename T3, typename ... Ts>
+  struct helper<I, 2, false,T0,T1,T2,T3, Ts...>
+  {
+    using type = apply_pack<join<>, list<T0,T1,T2,T3>, typename helper<I-4, detail::log2(I-4), false,Ts...>::type>;
+  };
+  template <std::size_t I,
+    typename T0, typename T1, typename T2, typename T3,
+    typename T4, typename T5, typename T6, typename T7,
+    typename ... Ts>
+  struct helper<I, 3, false,T0,T1,T2,T3,T4,T5,T6,T7, Ts...>
+  {
+    using type = apply_pack<join<>, list<T0,T1,T2,T3,T4,T5,T6,T7>, typename helper<I-8, detail::log2(I-8), false,Ts...>::type>;
+  };
+  template <std::size_t I, std::size_t L,
+    typename T0, typename T1, typename T2, typename T3,
+    typename T4, typename T5, typename T6, typename T7,
+    typename T8, typename T9, typename T10, typename T11,
+    typename T12, typename T13, typename T14, typename T15,
+    typename ... Ts>
+  struct helper<I,L, true, T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,Ts...>
+  {
+    using type = apply_pack<join<>, list<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15>, typename helper<I-16, detail::log2(I-16), (I >= 32), Ts...>::type>;
+  };
+  template <typename ... Ts>
+  using result = apply_pack<unwrap<C>, typename helper<N::value, detail::log2(N::value), (N::value >= 16), Ts...>::type>;
+};
+
 template<typename P, typename C = make<list>>
 struct partition {
   template <typename ... Ts>
