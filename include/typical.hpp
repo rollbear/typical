@@ -38,8 +38,8 @@ using identity_t = apply_one<identity, T>;
 
 template<template<typename ...> class C>
 struct make {
-  template<typename ... T>
-  using result = C<T...>;
+  template<typename ... Ts>
+  using result = C<Ts...>;
 };
 
 namespace detail {
@@ -47,11 +47,11 @@ namespace detail {
 template<template<typename ...> class, typename, typename>
 struct make_n;
 
-template<template<typename ...> class C, typename T, std::size_t ... I>
-struct make_n<C, T, std::index_sequence<I...>> {
+template<template<typename ...> class C, typename T, std::size_t ... Is>
+struct make_n<C, T, std::index_sequence<Is...>> {
   template<std::size_t>
   using made = T;
-  using type = C<made<I>...>;
+  using type = C<made<Is>...>;
 };
 
 }
@@ -83,8 +83,8 @@ struct compose<F>
 template<typename T>
 struct identity_template;
 
-template<template<typename ...> class L, typename ... T>
-struct identity_template<L<T...>> : make<L> {
+template<template<typename ...> class L, typename ... Ts>
+struct identity_template<L<Ts...>> : make<L> {
 };
 
 template <template <typename ...> class T, typename ... Ts>
@@ -461,11 +461,11 @@ struct drop_front
 {
     template <typename>
     struct helper;
-    template <typename ... V>
-    struct helper<list<V...>>
+    template <typename ... Vs>
+    struct helper<list<Vs...>>
     {
-       template <typename ... T>
-       static apply_pack<C, T...> func(V..., detail::proxy<T>*...);
+       template <typename ... Ts>
+       static apply_pack<C, Ts...> func(Vs..., detail::proxy<Ts>*...);
     };
     template <typename ... Ts>
     using result = decltype(helper<make_n<list, N, const void*>>::func(static_cast<detail::proxy<Ts>*>(nullptr)...));
@@ -538,20 +538,20 @@ template <typename C = identity>
 struct front {
   template <typename T>
   static apply_one<C, T> func(detail::proxy<T>*,...);
-  template <typename ... T>
-  using result = decltype(func(static_cast<detail::proxy<T>*>(nullptr)...));
+  template <typename ... Ts>
+  using result = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
 };
 
 
 template<typename P, typename C = identity>
 struct count_if {
-  template <auto ... I>
-  static constexpr auto sum = (...  + I);
+  template <auto ... Is>
+  static constexpr auto sum = (...  + Is);
 
   template <typename T>
   using eval = apply_one<P, T>;
-  template<typename ...T>
-  using result = apply_pack<C, constant<sum<eval<T>::value...>>>;
+  template<typename ...Ts>
+  using result = apply_pack<C, constant<sum<eval<Ts>::value...>>>;
 };
 
 template<typename P, typename L, typename C = identity>
