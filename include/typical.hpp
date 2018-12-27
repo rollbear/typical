@@ -20,47 +20,43 @@ using constant = typed_constant<std::remove_cv_t<decltype(V)>, V>;
 template<auto V>
 inline constexpr auto constant_v = constant<V>{};
 
-template <auto v1, auto v2>
-constexpr constant<v1+v2> operator+(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<v1-v2> operator-(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<v1/v2> operator/(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<v1*v2> operator*(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<v1%v2> operator%(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<v1==v2> operator==(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<v1!=v2> operator!=(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1<v2)> operator<(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1<=v2)> operator<=(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1>v2)> operator>(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1>=v2)> operator>=(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1<<v2)> operator<<(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1>>v2)> operator>>(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1&&v2)> operator&&(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1||v2)> operator||(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1&v2)> operator&(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1|v2)> operator|(constant<v1>,constant<v2>) { return {};}
-template <auto v1, auto v2>
-constexpr constant<(v1^v2)> operator^(constant<v1>,constant<v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1+v2)> operator+(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1-v2)> operator-(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1/v2)> operator/(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1*v2)> operator*(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1%v2)> operator%(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1==v2)> operator==(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1!=v2)> operator!=(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1<v2)> operator<(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1<=v2)> operator<=(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1>v2)> operator>(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1>=v2)> operator>=(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1|v2)> operator|(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1&v2)> operator&(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1^v2)> operator^(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1&&v2)> operator&&(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
+template <typename T1, T1 v1, typename T2, T2 v2>
+constexpr constant<(v1||v2)> operator||(typed_constant<T1,v1>,typed_constant<T2,v2>) { return {};}
 
-template <auto v1>
-constexpr constant<!v1> operator!(constant<v1>) { return {};}
-template <auto v1>
-constexpr constant<(~v1)> operator~(constant<v1>) { return {};}
+template <typename T1, auto v1>
+constexpr constant<!v1> operator!(typed_constant<T1,v1>) { return {};}
+template <typename T1, T1 v1>
+constexpr constant<(~v1)> operator~(typed_constant<T1,v1>) { return {};}
 
 template <typename F, typename C, typename ... Ts>
 using apply_to = typename F::template to<C>::template result<Ts...>;
@@ -100,13 +96,20 @@ template <typename T>
 struct proxy;
 
 template <typename T, typename = void>
+struct has_continuation : std::false_type{};
+
+template <typename T>
+struct has_continuation<T, std::void_t<typename T::continuation>>
+  : std::true_type {};
+
+template <typename T, bool = has_continuation<T>::value>
 struct to_
 {
   using type = T;
 };
 
 template <typename T>
-struct to_<T, std::void_t<typename T::template to<typename T::continuation>>>
+struct to_<T, true>
 {
   using type = typename T::template to<typename T::continuation>;
 };
@@ -182,7 +185,7 @@ struct compose<F, Fs...>
   struct to
   {
     template <typename ... Ts>
-    using result = typename compose<Fs...>::template to<typename F::template to<C>>::template result<Ts...>;
+    using result = apply_to<compose<Fs...>, typename F::template to<C>, Ts...>;
   };
 };
 
@@ -612,7 +615,7 @@ struct take
     };
     template<typename ... Ts>
     using result = apply_to<unwrap, TO, typename helper<N::value, detail::log2(
-      N::value), (N::value >= 16), Ts...>::type>;
+      N::value), (int(N::value) > 15), Ts...>::type>;
   };
 };
 
@@ -707,7 +710,7 @@ struct reverse {
   template<typename C = continuation>
   struct to {
     using TO = detail::to<C>;
-    template<std::size_t N, typename, bool = (N >= 10)>
+    template<std::size_t N, typename, bool>
     struct helper;
 
     template<template<typename ...> class L, typename ... Ts>
@@ -753,10 +756,10 @@ struct reverse {
     template<std::size_t N, template<typename ...> class L, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename ... Ts>
     struct helper<N, L<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, Ts...>, true> {
       using type = apply_to<join, TO, typename helper<
-        N - 10, L<Ts...>>::type, L<T10, T9, T8, T7, T6, T5, T4, T3, T2, T1>>;
+        N - 10, L<Ts...>, (N >= 20)>::type, L<T10, T9, T8, T7, T6, T5, T4, T3, T2, T1>>;
     };
     template<typename ...T>
-    using result = typename helper<sizeof...(T), typename TO::template result<T...>>::type;
+    using result = typename helper<sizeof...(T), typename TO::template result<T...>, (sizeof...(T) >= 10)>::type;
   };
 };
 
