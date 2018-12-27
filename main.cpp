@@ -539,6 +539,16 @@ static_assert(std::is_same_v<apply_pack<typical::has<char>, void, int, bool>,
 static_assert(std::is_same_v<apply_pack<typical::has<char>>,
   typical::constant<false>>);
 
+static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<3>,c<4>>,
+  typical::constant<true>>);
+static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<3>,c<1>>,
+  typical::constant<false>>);
+static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<1>,c<3>>,
+  typical::constant<false>>);
+static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<3>,c<1>>,
+  typical::constant<false>>);
+static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<3>,c<3>>,
+  typical::constant<false>>);
 template <typename T>
 void ignore();
 struct is_even {

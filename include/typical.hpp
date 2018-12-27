@@ -816,6 +816,33 @@ struct index_of
   };
 };
 
+namespace detail {
+  template <typename ...>
+  struct unique;
+
+  template <typename T>
+  struct unique<T>
+  {
+    static constexpr auto value = true;
+  };
+
+  template <typename T, typename ...Ts>
+  struct unique<T, Ts...>
+  {
+    static constexpr auto value = !apply_pack<has<T>, Ts...>::value && unique<Ts...>::value;
+  };
+}
+
+struct all_unique
+{
+  using continuation = identity;
+  template <typename C = continuation>
+  struct to {
+    template <typename ... Ts>
+    using result = apply_one<C, constant<detail::unique<Ts...>::value>>;
+  };
+};
+
 
 }
 
