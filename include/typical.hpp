@@ -791,6 +791,30 @@ struct flatten
 template <typename T>
 using has = any_of<is_same<T>>;
 
+namespace detail
+{
+}
+
+template <typename T>
+struct index_of
+{
+  template <std::size_t ... Is, typename ... Ts>
+  static constexpr auto index_func(std::index_sequence<Is...>, detail::proxy<Ts>*...)
+  {
+    constexpr auto i = (((std::is_same_v<T,Ts>*(Is+1)) + ...));
+    return int(i)-1;
+  }
+
+  using continuation = identity;
+  template <typename C = continuation>
+  struct to {
+    using TO = detail::to<C>;
+
+    template <typename ... Ts>
+    using result = apply_one<TO, constant<index_func(std::index_sequence_for<Ts...>{},static_cast<detail::proxy<Ts>*>(nullptr)...)>>;
+  };
+};
+
 }
 
 #endif //TYPICAL_TYPICAL_HPP
