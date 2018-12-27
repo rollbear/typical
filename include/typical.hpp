@@ -677,6 +677,13 @@ struct flatten
   using result = typename helper<T>::type;
 };
 
+template <typename T, typename C = identity>
+struct has
+{
+  template <typename ... Ts>
+  using result = apply_one<C, constant<std::disjunction_v<apply_one<is_same<T>, Ts>...>>>;
+};
+
 }
 
 #endif //TYPICAL_TYPICAL_HPP
