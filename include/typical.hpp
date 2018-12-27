@@ -112,13 +112,56 @@ struct typed_constant
 {
   using type = T;
   static constexpr T value{v};
+  constexpr operator type() const { return v;}
 };
 
 template<auto V>
 using constant = typed_constant<std::remove_cv_t<decltype(V)>, V>;
 
 template<auto V>
-inline constexpr auto constant_v = constant<V>::value;
+inline constexpr auto constant_v = constant<V>{};
+
+template <auto v1, auto v2>
+constexpr constant<v1+v2> operator+(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<v1-v2> operator-(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<v1/v2> operator/(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<v1*v2> operator*(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<v1%v2> operator%(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<v1==v2> operator==(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<v1!=v2> operator!=(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1<v2)> operator<(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1<=v2)> operator<=(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1>v2)> operator>(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1>=v2)> operator>=(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1<<v2)> operator<<(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1>>v2)> operator>>(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1&&v2)> operator&&(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1||v2)> operator||(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1&v2)> operator&(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1|v2)> operator|(constant<v1>,constant<v2>) { return {};}
+template <auto v1, auto v2>
+constexpr constant<(v1^v2)> operator^(constant<v1>,constant<v2>) { return {};}
+
+template <auto v1>
+constexpr constant<!v1> operator!(constant<v1>) { return {};}
+template <auto v1>
+constexpr constant<(~v1)> operator~(constant<v1>) { return {};}
 
 template <typename C = identity>
 struct is_empty
