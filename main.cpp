@@ -9,45 +9,9 @@ using typical::apply_pack;
 using typical::apply_one;
 
 
-//static_assert(std::is_same_v<apply_pack<typical::bind_front<std::tuple, int, char>, bool, double>,
-//std::tuple<int,char,bool,double>>);
-static_assert(std::is_same_v<apply_pack<typical::add_pointer, int>, int*>);
-static_assert(std::is_same_v<apply_pack<typical::add_lvalue_reference, int const>, int const&>);
-static_assert(std::is_same_v<apply_pack<typical::add_rvalue_reference, int volatile>, int volatile&&>);
-static_assert(std::is_same_v<apply_pack<typical::add_const, int>, int const>);
-static_assert(std::is_same_v<apply_pack<typical::add_volatile, int>, int volatile>);
-static_assert(std::is_same_v<apply_pack<typical::remove_reference, int&>, int>);
-static_assert(std::is_same_v<apply_pack<typical::remove_reference, int&&>, int>);
-static_assert(std::is_same_v<apply_pack<typical::remove_pointer, int const * const>, int const>);
-static_assert(std::is_same_v<apply_pack<typical::remove_const, int const * const>, int const*>);
-static_assert(std::is_same_v<apply_pack<typical::remove_const, int *>, int *>);
-static_assert(std::is_same_v<apply_pack<typical::remove_volatile, int const volatile>, int const>);
-static_assert(apply_pack<typical::is_same<int>, int>::value);
-static_assert(!apply_pack<typical::is_same<int>, char>::value);
-static_assert(apply_pack<typical::is_pointer, int*>::value);
-static_assert(!apply_pack<typical::is_pointer, int>::value);
-static_assert(apply_pack<typical::is_reference, int&&>::value);
-static_assert(apply_pack<typical::is_reference, int&>::value);
-static_assert(!apply_pack<typical::is_reference, int>::value);
-static_assert(!apply_pack<typical::is_lvalue_reference, int&&>::value);
-static_assert(apply_pack<typical::is_lvalue_reference, int&>::value);
-static_assert(!apply_pack<typical::is_lvalue_reference, int>::value);
-static_assert(apply_pack<typical::is_rvalue_reference, int&&>::value);
-static_assert(!apply_pack<typical::is_rvalue_reference, int&>::value);
-static_assert(!apply_pack<typical::is_rvalue_reference, int>::value);
-static_assert(apply_pack<typical::is_const, int const>::value);
-static_assert(!apply_pack<typical::is_const, int>::value);
-static_assert(apply_pack<typical::is_volatile, int volatile>::value);
-static_assert(!apply_pack<typical::is_volatile, int>::value);
-
 template <typename...>
 struct S;//{S() = delete;};
 
-static_assert(apply_pack<typical::is_template<std::tuple>, std::tuple<int,char>>::value);
-static_assert(!apply_pack<typical::is_template<std::variant>, std::tuple<int,char>>::value);
-
-static_assert(apply_pack<typical::negate<typical::is_same<int>>, char>::value);
-static_assert(!apply_pack<typical::negate<typical::is_same<int>>, int>::value);
 
 static_assert(std::is_same_v<apply_pack<typical::is_empty, typical::list<>>,
   typical::constant<true>>);

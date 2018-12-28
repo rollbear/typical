@@ -6,6 +6,7 @@
 #include <typical/function_support.hpp>
 #include <typical/compose.hpp>
 #include <typical/type_traits.hpp>
+#include <typical/type_predicates.hpp>
 #include <typical/application.hpp>
 
 #include <type_traits>
