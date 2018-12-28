@@ -17,6 +17,7 @@
 #include <typical/algorithms/drop_front.hpp>
 #include <typical/algorithms/take.hpp>
 #include <typical/algorithms/count_if.hpp>
+#include <typical/algorithms/index_of.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
@@ -161,30 +162,6 @@ struct flatten
   };
 };
 
-template <typename T>
-struct index_of
-{
-  template <std::size_t ... Is, typename ... Ts>
-  static constexpr auto index_func(std::index_sequence<Is...>, detail::proxy<Ts>*...)
-  {
-    constexpr auto i = (((std::is_same_v<T,Ts>*(Is+1)) + ...));
-    return int(i)-1;
-  }
-  template <typename ... Ts>
-  static constexpr auto index_func(detail::proxy<Ts>*... p)
-  {
-    return index_func(std::index_sequence_for<Ts...>{}, p...);
-  }
-
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-
-    template <typename ... Ts>
-    using result = apply_one<TO,constant<index_func(static_cast<detail::proxy<Ts>*>(nullptr)...)>>;
-  };
-};
 
 }
 
