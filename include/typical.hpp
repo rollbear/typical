@@ -13,6 +13,7 @@
 #include <typical/algorithms/join.hpp>
 #include <typical/algorithms/size.hpp>
 #include <typical/algorithms/filter.hpp>
+#include <typical/algorithms/partition.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
@@ -140,24 +141,6 @@ struct take
       N::value), (int(N::value) > 15), Ts...>::type>;
   };
 };
-
-template<typename P>
-struct partition {
-  using continuation = make<list>;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename ... Ts>
-    struct helper {
-      using type = typename TO::template result<apply_pack_to<join, make<list>, conditional_t<apply_pack<P, Ts>::value, list<Ts>, list<>>...>,
-        apply_pack_to<join, make<list>, conditional_t<apply_pack<P, Ts>::value, list<>, list<Ts>>...>>;
-    };
-    template<typename ... Ts>
-    using result = typename helper<Ts...>::type;
-  };
-};
-
-
 
 struct front {
   using continuation = identity;
