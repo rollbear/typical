@@ -50,19 +50,8 @@ using L = typical::list<Ts...>;
 // L<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32>,L<33>
 // 1 L<1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32>,L<33>
 
-struct make_pair
-{
-  using continuation = typical::identity;
-  template <typename C = continuation>
-  struct to {
-    template<typename T, typename U>
-    using result = typename C::template result<std::pair<T, U>>;
-  };
-};
 
 
-static_assert(std::is_same_v<apply_pack<typical::zip<::make_pair>, std::tuple<int,char>, std::variant<bool,double>>,
-  typical::list<std::pair<int,bool>, std::pair<char,double>>>);
 
 static_assert(std::is_same_v<apply_pack<typical::partition<typical::is_pointer>, int,void*,int*, double, char*>,
   typical::list<typical::list<void*,int*,char*>,typical::list<int,double>>>);

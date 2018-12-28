@@ -22,6 +22,7 @@
 #include <typical/algorithms/at.hpp>
 #include <typical/algorithms/reverse.hpp>
 #include <typical/algorithms/flatten.hpp>
+#include <typical/algorithms/zip.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
@@ -38,23 +39,6 @@ template<template<typename ...> class L, typename ... Ts>
 struct identity_template<L<Ts...>> : make<L> {
 };
 
-template<typename F>
-struct zip {
-  using continuation = make<list>;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename L1, typename L2>
-    struct helper;
-    template<template<typename ...> class L1, typename ... L1s,
-      template<typename...> class L2, typename ... L2s>
-    struct helper<L1<L1s...>, L2<L2s...>> {
-      using type = typename TO::template result< apply_pack<F,L1s, L2s>...>;
-    };
-    template<typename L1, typename L2>
-    using result = typename helper<L1, L2>::type;
-  };
-};
 
 }
 
