@@ -2,6 +2,7 @@
 #define TYPICAL_TYPICAL_HPP
 
 #include <typical/constant.hpp>
+#include <typical/conditional.hpp>
 
 #include <type_traits>
 #include <utility>
@@ -19,21 +20,6 @@ using apply_pack = typename F::template to<typename F::continuation>::template r
 
 template <typename F, typename T>
 using apply_one = typename F::template result<T>;
-
-template<bool>
-struct conditional {
-  template<typename T, typename>
-  using result = T;
-};
-
-template<>
-struct conditional<false> {
-  template<typename, typename U>
-  using result = U;
-};
-
-template<bool b, typename T, typename U>
-using conditional_t = typename conditional<b>::template result<T, U>;
 
 namespace detail {
 static constexpr unsigned log2(unsigned n, unsigned b = 16)

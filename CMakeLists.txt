@@ -9,5 +9,5 @@ add_library(typical INTERFACE)
 target_include_directories(typical INTERFACE $<BUILD_INTERFACE:${INCLUDE_DIR}>)
 target_include_directories(typical INTERFACE $<INSTALL_INTERFACE:$<INSTALL_PREFIX>/include>)
 
-add_executable(tests main.cpp include/typical/constant.hpp tests/constant.cpp)
+add_executable(tests main.cpp include/typical/constant.hpp tests/constant.cpp include/typical/conditional.hpp tests/conditional.cpp)
 target_link_libraries(tests PRIVATE typical)
