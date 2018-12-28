@@ -24,6 +24,12 @@ static_assert(std::is_same_v<typical::add_const::to<wrap>::result<int>, wrapped<
 static_assert(std::is_same_v<typical::add_volatile::to<>::result<int>, int volatile>);
 static_assert(std::is_same_v<typical::add_volatile::to<wrap>::result<int>, wrapped<int volatile>>);
 
+static_assert(std::is_same_v<typical::remove_const::to<>::result<int const volatile>, int volatile>);
+static_assert(std::is_same_v<typical::remove_const::to<wrap>::result<int const volatile>, wrapped<int volatile>>);
+
+static_assert(std::is_same_v<typical::remove_volatile::to<>::result<int const volatile>, int const>);
+static_assert(std::is_same_v<typical::remove_volatile::to<wrap>::result<int const volatile>, wrapped<int const>>);
+
 static_assert(std::is_same_v<typical::remove_cv::to<>::result<int>, int>);
 static_assert(std::is_same_v<typical::remove_cv::to<wrap>::result<int>, wrapped<int>>);
 static_assert(std::is_same_v<typical::remove_cv::to<>::result<int const>, int>);
