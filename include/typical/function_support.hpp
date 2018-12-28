@@ -41,6 +41,15 @@ using to = typename to_<T>::type;
 
 }
 
+template<typename...>
+struct list {};
+
+template<template<typename ...> class C>
+struct make {
+  template<typename ... Ts>
+  using result = C<Ts...>;
+};
+
 template <typename F, typename T>
 using apply_one = typename F::template result<T>;
 

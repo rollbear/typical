@@ -6,20 +6,12 @@
 #include <typical/function_support.hpp>
 #include <typical/compose.hpp>
 #include <typical/type_traits.hpp>
+#include <typical/application.hpp>
 
 #include <type_traits>
 #include <utility>
 
 namespace typical {
-
-
-template <typename F, typename C, typename ... Ts>
-using apply_to = typename F::template to<C>::template result<Ts...>;
-template <typename F, typename ... Ts>
-using apply_pack = typename F::template to<typename F::continuation>::template result<Ts...>;
-
-//template<typename F, typename ... Ts>
-//using apply_pack = typename F::template result<Ts...>;
 
 namespace detail {
 
@@ -36,18 +28,10 @@ struct proxy;
 
 }
 
-template<typename...>
-struct list {};
 
 
 template<typename T>
 using identity_t = apply_one<identity, T>;
-
-template<template<typename ...> class C>
-struct make {
-  template<typename ... Ts>
-  using result = C<Ts...>;
-};
 
 namespace detail {
 
@@ -95,29 +79,12 @@ struct transform {
   };
 };
 
-struct unwrap {
-  using continuation = make<list>;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename T>
-    struct helper {
-      using type = typename TO::template result<T>;
-    };
-    template<template<typename ...> class L, typename... Ts>
-    struct helper<L<Ts...>> {
-      using type = typename TO::template result<Ts...>;
-    };
-    template<typename ...Ts>
-    using result = typename helper<Ts...>::type;
-  };
-};
 
 template <template <typename ...> class C>
 struct metamorph
 {
   template <typename ... Ts>
-  using result = apply_to<unwrap, make<C>, Ts...>;
+  using result = apply_pack_to<unwrap, make<C>, Ts...>;
 };
 
 template<typename L, template<typename ...> class D>
@@ -399,7 +366,7 @@ struct take
         I - 16, detail::log2(I - 16), (I >= 32), Ts...>::type>;
     };
     template<typename ... Ts>
-    using result = apply_to<unwrap, TO, typename helper<N::value, detail::log2(
+    using result = apply_pack_to<unwrap, TO, typename helper<N::value, detail::log2(
       N::value), (int(N::value) > 15), Ts...>::type>;
   };
 };
@@ -412,8 +379,8 @@ struct partition {
     using TO = detail::to<C>;
     template<typename ... Ts>
     struct helper {
-      using type = typename TO::template result<apply_to<join, make<list>, conditional_t<apply_pack<P, Ts>::value, list<Ts>, list<>>...>,
-        apply_to<join, make<list>, conditional_t<apply_pack<P, Ts>::value, list<>, list<Ts>>...>>;
+      using type = typename TO::template result<apply_pack_to<join, make<list>, conditional_t<apply_pack<P, Ts>::value, list<Ts>, list<>>...>,
+        apply_pack_to<join, make<list>, conditional_t<apply_pack<P, Ts>::value, list<>, list<Ts>>...>>;
     };
     template<typename ... Ts>
     using result = typename helper<Ts...>::type;
@@ -486,7 +453,7 @@ struct at
   struct to {
     using TO = detail::to<C>;
     template<typename ...Ts>
-    using result = apply_to<compose<front, drop_front<N>>, TO, Ts...>;
+    using result = apply_pack_to<compose<front, drop_front<N>>, TO, Ts...>;
   };
 };
 
@@ -540,7 +507,7 @@ struct reverse {
     };
     template<std::size_t N, template<typename ...> class L, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename ... Ts>
     struct helper<N, L<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, Ts...>, true> {
-      using type = apply_to<join, TO, typename helper<
+      using type = apply_pack_to<join, TO, typename helper<
         N - 10, L<Ts...>, (N >= 20)>::type, L<T10, T9, T8, T7, T6, T5, T4, T3, T2, T1>>;
     };
     template<typename ...T>
@@ -564,9 +531,9 @@ struct flatten
       };
       template<typename ... Vs>
       struct split<L<Vs...>> {
-        using type = apply_to<join, TO, typename split<Vs>::type...>;
+        using type = apply_pack_to<join, TO, typename split<Vs>::type...>;
       };
-      using type = apply_to<join, TO, typename split<Ts>::type...>;
+      using type = apply_pack_to<join, TO, typename split<Ts>::type...>;
     };
     template<typename T>
     using result = typename helper<T>::type;
