@@ -11,19 +11,12 @@
 #include <typical/application.hpp>
 #include <typical/algorithms/transform.hpp>
 #include <typical/algorithms/join.hpp>
+#include <typical/algorithms/size.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
 
 namespace typical {
-
-namespace detail {
-
-
-
-}
-
-
 
 template<typename T>
 using identity_t = apply_one<identity, T>;
@@ -51,24 +44,6 @@ struct identity_template;
 template<template<typename ...> class L, typename ... Ts>
 struct identity_template<L<Ts...>> : make<L> {
 };
-
-
-struct size {
-  template<typename>
-  struct helper;
-  template<template<typename ...> class L, typename ... Ts>
-  struct helper<L<Ts...>> {
-    static constexpr std::size_t value = sizeof...(Ts);
-  };
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename T>
-    using result = apply_one<C, constant<helper<T>::value>>;
-  };
-};
-
 
 template<typename F>
 struct zip {
