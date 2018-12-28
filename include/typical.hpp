@@ -12,6 +12,7 @@
 #include <typical/algorithms/transform.hpp>
 #include <typical/algorithms/join.hpp>
 #include <typical/algorithms/size.hpp>
+#include <typical/algorithms/filter.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
@@ -62,21 +63,6 @@ struct zip {
     using result = typename helper<L1, L2>::type;
   };
 };
-
-
-template<typename P>
-struct filter
-{
-  using continuation = make<list>;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename ... Ts>
-    using result = typename join::template to<TO>::template result<conditional_t<apply_pack<P, Ts>::value, list<Ts>, list<>>...>;
-  };
-};
-
-
 
 template <typename N>
 struct drop_front

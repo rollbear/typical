@@ -64,9 +64,6 @@ struct make_pair
 static_assert(std::is_same_v<apply_pack<typical::zip<::make_pair>, std::tuple<int,char>, std::variant<bool,double>>,
   typical::list<std::pair<int,bool>, std::pair<char,double>>>);
 
-static_assert(std::is_same_v<apply_pack<typical::filter<typical::is_pointer>, int, void*, int*, double, char*>,
-  typical::list<void*, int*, char*>>);
-
 static_assert(std::is_same_v<apply_pack<typical::partition<typical::is_pointer>, int,void*,int*, double, char*>,
   typical::list<typical::list<void*,int*,char*>,typical::list<int,double>>>);
 
