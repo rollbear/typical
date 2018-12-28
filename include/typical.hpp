@@ -4,6 +4,8 @@
 #include <typical/constant.hpp>
 #include <typical/conditional.hpp>
 #include <typical/function_support.hpp>
+#include <typical/compose.hpp>
+
 #include <type_traits>
 #include <utility>
 
@@ -70,33 +72,6 @@ template<template<typename ...> class L, typename ... Ts>
 struct identity_template<L<Ts...>> : make<L> {
 };
 
-template <typename ...>
-struct compose;
-
-template <>
-struct compose<>
-{
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to
-  {
-    using T = detail::to<C>;
-    template <typename ... Ts>
-    using result = typename T::template result<Ts...>;
-  };
-};
-
-template <typename F, typename ... Fs>
-struct compose<F, Fs...>
-{
-  using continuation = typename F::continuation;
-  template <typename C = continuation>
-  struct to
-  {
-    template <typename ... Ts>
-    using result = apply_to<compose<Fs...>, typename F::template to<C>, Ts...>;
-  };
-};
 
 template <template <typename ...> class T, typename ... Ts>
 struct bind_front {
