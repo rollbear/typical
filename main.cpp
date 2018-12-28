@@ -31,12 +31,7 @@ static_assert(std::is_same_v<apply_pack<typical::remove_cv, int>, int>);
 static_assert(std::is_same_v<apply_pack<typical::remove_cv_ref, int const volatile&>, int>);
 static_assert(std::is_same_v<apply_pack<typical::remove_cv_ref, int const volatile&&>, int>);
 
-static_assert(std::is_same_v<apply_pack<typical::transform<typical::add_pointer>, int,char,double>,
-typical::list<int*,char*,double*>>);
-static_assert(std::is_same_v<apply_pack<typical::transform<typical::add_pointer>>, typical::list<>>);
-static_assert(std::is_same_v<apply_pack<typical::compose<typical::transform<typical::add_pointer>, typical::unwrap>, std::tuple<int,char,double>>, typical::list<int*,char*,double*>>);
 
-static_assert(std::is_same_v<typical::metamorph_t<std::tuple<int,char,double>, std::variant>, std::variant<int,char,double>>);
 //static_assert(std::is_same_v<apply_pack<typical::metamorph<std::variant>, std::tuple<int,char,double>>,
 //  std::variant<int,char,double>>);
 //static_assert(std::is_same_v<apply_pack<typical::metamorph<std::variant>, std::tuple<>>,
@@ -214,11 +209,6 @@ static_assert(std::is_same_v<apply_pack<typical::flatten,
   typical::list<c<1>,c<2>,typical::list<c<3>, c<4>, typical::list<c<5>, c<6>>>,std::tuple<c<7>, c<8>, typical::list<c<9>,c<10>>>,typical::list<c<11>,typical::list<c<12>,typical::list<c<13>>>>>>,
   typical::list<c<1>,c<2>,c<3>,c<4>,c<5>,c<6>,std::tuple<c<7>,c<8>,typical::list<c<9>,c<10>>>,c<11>,c<12>,c<13>>>);
 
-
-//S<apply_pack<typical::drop_front<typical::constant<5>>, c<1>, c<2>, c<3>, c<4>>> s;
-//S<std::common_type_t<apply_pack<typical::transform<typical::inner_type<>>>, typical::list<typical::enumerated<1,int>, typical::enumerated<2,void>>>>> s;
-//S<apply_pack<typical::enumerate<typical::transform<typical::inner_type<>>>,void, int>> s;
-//S<apply_pack<typical::filter<typical::drop_predicate<2>, typical::transform<typical::inner_type<>>>, typical::list<typical::enumerated<1,int>, typical::enumerated<3,void>>>> s;
 
 static_assert(std::is_same_v<apply_pack<typical::drop_front<typical::constant<0>>, c<1>,c<2>,c<3>,c<4>,c<5>,c<6>,c<7>,c<8>,c<9>,c<10>,c<11>,c<12>,c<13>,c<14>,c<15>,c<16>,c<17>,c<18>,c<19>,c<20>,c<21>,c<22>,c<23>,c<24>,c<25>,c<26>,c<27>,c<28>,c<29>,c<30>,c<31>,c<32>,c<33>,c<34>,c<35>>,
   typical::list<c<1>,c<2>,c<3>,c<4>,c<5>,c<6>,c<7>,c<8>,c<9>,c<10>,c<11>,c<12>,c<13>,c<14>,c<15>,c<16>,c<17>,c<18>,c<19>,c<20>,c<21>,c<22>,c<23>,c<24>,c<25>,c<26>,c<27>,c<28>,c<29>,c<30>,c<31>,c<32>,c<33>,c<34>,c<35>>>);

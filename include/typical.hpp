@@ -9,6 +9,7 @@
 #include <typical/type_predicates.hpp>
 #include <typical/list_predicates.hpp>
 #include <typical/application.hpp>
+#include <typical/algorithms/transform.hpp>
 
 #include <type_traits>
 #include <utility>
@@ -58,30 +59,6 @@ struct identity_template;
 template<template<typename ...> class L, typename ... Ts>
 struct identity_template<L<Ts...>> : make<L> {
 };
-
-
-template<typename F>
-struct transform {
-  using continuation = make<list>;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename ... Ts>
-    using result = typename TO::template result<apply_pack<F, Ts>...>;
-  };
-};
-
-
-template <template <typename ...> class C>
-struct metamorph
-{
-  template <typename ... Ts>
-  using result = apply_pack_to<unwrap, make<C>, Ts...>;
-};
-
-template<typename L, template<typename ...> class D>
-using metamorph_t = apply_one<metamorph<D>, L>;
-
 
 struct join {
   using continuation = make<list>;

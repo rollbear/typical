@@ -3,7 +3,7 @@
 
 #include <typical/function_support.hpp>
 #include <typical/compose.hpp>
-
+#include <typical/application.hpp>
 namespace typical
 {
 using add_pointer = from_type<std::add_pointer>;
@@ -18,6 +18,15 @@ using remove_volatile = from_type<std::remove_volatile>;
 using remove_cv = compose<remove_volatile,remove_const>;
 using remove_cv_ref = compose<remove_cv, remove_reference>;
 
+template <template <typename ...> class C>
+struct metamorph
+{
+  template <typename ... Ts>
+  using result = apply_pack_to<unwrap, make<C>, Ts...>;
+};
+
+template<typename L, template<typename ...> class D>
+using metamorph_t = apply_one<metamorph<D>, L>;
 
 }
 #endif //TYPICAL_TYPE_TRAITS_HPP

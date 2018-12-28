@@ -43,3 +43,5 @@ static_assert(std::is_same_v<typical::remove_cv_ref::to<>::result<int const vola
 static_assert(std::is_same_v<typical::remove_cv_ref::to<>::result<int const volatile&>, int>);
 static_assert(std::is_same_v<typical::remove_cv_ref::to<>::result<int const volatile&&>, int>);
 
+static_assert(std::is_same_v<typical::metamorph_t<std::tuple<int,char,double>, std::variant>, std::variant<int,char,double>>);
+static_assert(std::is_same_v<typical::metamorph_t<std::variant<>, std::tuple>, std::tuple<>>);
