@@ -68,13 +68,6 @@ static_assert(std::is_same_v<apply_pack<typical::partition<typical::is_pointer>,
   typical::list<typical::list<void*,int*,char*>,typical::list<int,double>>>);
 
 
-
-static_assert(std::is_same_v<apply_pack<typical::flatten,
-  typical::list<c<1>,c<2>,typical::list<c<3>, c<4>, typical::list<c<5>, c<6>>>,std::tuple<c<7>, c<8>, typical::list<c<9>,c<10>>>,typical::list<c<11>,typical::list<c<12>,typical::list<c<13>>>>>>,
-  typical::list<c<1>,c<2>,c<3>,c<4>,c<5>,c<6>,std::tuple<c<7>,c<8>,typical::list<c<9>,c<10>>>,c<11>,c<12>,c<13>>>);
-
-
-
 template <typename T>
 void ignore();
 struct is_even {

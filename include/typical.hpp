@@ -21,6 +21,7 @@
 #include <typical/algorithms/front.hpp>
 #include <typical/algorithms/at.hpp>
 #include <typical/algorithms/reverse.hpp>
+#include <typical/algorithms/flatten.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
@@ -54,33 +55,6 @@ struct zip {
     using result = typename helper<L1, L2>::type;
   };
 };
-
-
-struct flatten
-{
-  using continuation = make<list>;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename T>
-    struct helper;
-    template<template<typename ...> class L, typename ... Ts>
-    struct helper<L<Ts...>> {
-      template<typename V>
-      struct split {
-        using type = L<V>;
-      };
-      template<typename ... Vs>
-      struct split<L<Vs...>> {
-        using type = apply_pack_to<join, TO, typename split<Vs>::type...>;
-      };
-      using type = apply_pack_to<join, TO, typename split<Ts>::type...>;
-    };
-    template<typename T>
-    using result = typename helper<T>::type;
-  };
-};
-
 
 }
 
