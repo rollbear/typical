@@ -19,6 +19,7 @@
 #include <typical/algorithms/count_if.hpp>
 #include <typical/algorithms/index_of.hpp>
 #include <typical/algorithms/front.hpp>
+#include <typical/algorithms/at.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
@@ -50,19 +51,6 @@ struct zip {
     };
     template<typename L1, typename L2>
     using result = typename helper<L1, L2>::type;
-  };
-};
-
-
-template <typename N>
-struct at
-{
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename ...Ts>
-    using result = apply_pack_to<compose<front, drop_front<N>>, TO, Ts...>;
   };
 };
 
