@@ -14,6 +14,7 @@
 #include <typical/algorithms/size.hpp>
 #include <typical/algorithms/filter.hpp>
 #include <typical/algorithms/partition.hpp>
+#include <typical/algorithms/drop_front.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
@@ -22,23 +23,6 @@ namespace typical {
 
 template<typename T>
 using identity_t = apply_one<identity, T>;
-
-namespace detail {
-
-template<template<typename ...> class, typename, typename>
-struct make_n;
-
-template<template<typename ...> class C, typename T, std::size_t ... Is>
-struct make_n<C, T, std::index_sequence<Is...>> {
-  template<std::size_t>
-  using made = T;
-  using type = C<made<Is>...>;
-};
-
-}
-template <template <typename ...> class C, typename N, typename T>
-using make_n = typename detail::make_n<C, T, std::make_index_sequence<N::value>>::type;
-
 
 template<typename T>
 struct identity_template;
@@ -65,28 +49,6 @@ struct zip {
   };
 };
 
-template <typename N>
-struct drop_front
-{
-  using continuation = make<list>;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-
-    template<typename>
-    struct helper;
-
-    template<typename ... Vs>
-    struct helper<list<Vs...>> {
-      template<typename ... Ts>
-      static typename TO::template result<Ts...> func(Vs..., detail::proxy<Ts> *...);
-    };
-
-    template<typename ... Ts>
-    using result = decltype(helper<make_n<list, N, const void *>>::func(
-      static_cast<detail::proxy<Ts> *>(nullptr)...));
-  };
-};
 
 template <typename N>
 struct take
