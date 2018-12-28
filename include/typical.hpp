@@ -5,7 +5,7 @@
 #include <typical/conditional.hpp>
 #include <typical/function_support.hpp>
 #include <typical/compose.hpp>
-#include <typical/type_traits.hpp>
+#include <typical/type_manipulation.hpp>
 #include <typical/type_predicates.hpp>
 #include <typical/list_predicates.hpp>
 #include <typical/application.hpp>
