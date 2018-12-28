@@ -18,6 +18,7 @@
 #include <typical/algorithms/take.hpp>
 #include <typical/algorithms/count_if.hpp>
 #include <typical/algorithms/index_of.hpp>
+#include <typical/algorithms/front.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
@@ -49,20 +50,6 @@ struct zip {
     };
     template<typename L1, typename L2>
     using result = typename helper<L1, L2>::type;
-  };
-};
-
-
-struct front {
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename T>
-    static apply_one<TO, T> func(detail::proxy<T> *, ...);
-
-    template<typename ... Ts>
-    using result = decltype(func(static_cast<detail::proxy<Ts> *>(nullptr)...));
   };
 };
 
