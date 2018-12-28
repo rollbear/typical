@@ -3,7 +3,7 @@
 
 #include <typical/constant.hpp>
 #include <typical/conditional.hpp>
-
+#include <typical/function_support.hpp>
 #include <type_traits>
 #include <utility>
 
@@ -18,10 +18,8 @@ using apply_pack = typename F::template to<typename F::continuation>::template r
 //template<typename F, typename ... Ts>
 //using apply_pack = typename F::template result<Ts...>;
 
-template <typename F, typename T>
-using apply_one = typename F::template result<T>;
-
 namespace detail {
+
 static constexpr unsigned log2(unsigned n, unsigned b = 16)
 {
   if (n <= 1) return 0;
@@ -32,38 +30,12 @@ static constexpr unsigned log2(unsigned n, unsigned b = 16)
 template <typename T>
 struct proxy;
 
-template <typename T, typename = void>
-struct has_continuation : std::false_type{};
-
-template <typename T>
-struct has_continuation<T, std::void_t<typename T::continuation>>
-  : std::true_type {};
-
-template <typename T, bool = has_continuation<T>::value>
-struct to_
-{
-  using type = T;
-};
-
-template <typename T>
-struct to_<T, true>
-{
-  using type = typename T::template to<typename T::continuation>;
-};
-
-
-template <typename T>
-using to = typename to_<T>::type;
 
 }
 
 template<typename...>
 struct list {};
 
-struct identity {
-  template<typename T>
-  using result = T;
-};
 
 template<typename T>
 using identity_t = apply_one<identity, T>;
@@ -136,20 +108,6 @@ struct bind_front {
   using result = typename helper<Vs...>::type;
 };
 
-template<template <typename...> class T>
-struct from_type {
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename ... Vs>
-    struct helper {
-      using type = typename TO::template result<typename T<Vs...>::type>;
-    };
-    template<typename ... Vs>
-    using result = typename helper<Vs...>::type;
-  };
-};
 
 
 struct is_empty
@@ -168,17 +126,6 @@ struct is_empty
 };
 
 
-template <template <typename ...> class T>
-struct from_value
-{
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename ... Vs>
-    using result = typename TO::template result<constant<T<Vs...>::value>>;
-  };
-};
 
 using add_pointer = from_type<std::add_pointer>;
 using add_lvalue_reference = from_type<std::add_lvalue_reference>;
