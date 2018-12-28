@@ -16,6 +16,7 @@
 #include <typical/algorithms/partition.hpp>
 #include <typical/algorithms/drop_front.hpp>
 #include <typical/algorithms/take.hpp>
+#include <typical/algorithms/count_if.hpp>
 #include <typical/utilities.hpp>
 #include <type_traits>
 #include <utility>
@@ -61,24 +62,6 @@ struct front {
 
     template<typename ... Ts>
     using result = decltype(func(static_cast<detail::proxy<Ts> *>(nullptr)...));
-  };
-};
-
-
-template<typename P>
-struct count_if {
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-
-    template<auto ... Is>
-    static constexpr auto sum = (...  + Is);
-
-    template<typename T>
-    using eval = apply_pack<P, T>;
-    template<typename ...Ts>
-    using result = typename TO::template result<constant<sum<eval<Ts>::value...>>>;
   };
 };
 

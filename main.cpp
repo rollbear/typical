@@ -68,14 +68,6 @@ static_assert(std::is_same_v<apply_pack<typical::partition<typical::is_pointer>,
   typical::list<typical::list<void*,int*,char*>,typical::list<int,double>>>);
 
 
-static_assert(std::is_same_v<apply_pack<typical::count_if<typical::is_pointer>,int,int*,void*,double>,
-                typical::constant<2>>);
-static_assert(std::is_same_v<apply_pack<typical::count_if<typical::is_reference>,int,int*,void*,double>,
-  typical::constant<0>>);
-static_assert(std::is_same_v<apply_pack<typical::count_if<typical::is_same<int>>,int,int*,void*,double>,
-  typical::constant<1>>);
-
-
 static_assert(std::is_same_v<apply_pack<typical::reverse, c<1>>,
   typical::list<c<1>>>);
 static_assert(std::is_same_v<apply_pack<typical::reverse, c<1>,c<2>>,
