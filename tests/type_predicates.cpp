@@ -43,12 +43,6 @@ static_assert(std::is_same_v<typical::is_volatile::to<>::result<int volatile*>, 
 static_assert(std::is_same_v<typical::is_volatile::to<>::result<int volatile&>, typical::constant<false>>);
 static_assert(std::is_same_v<typical::is_volatile::to<>::result<int const volatile>, typical::constant<true>>);
 
-static_assert(std::is_same_v<typical::is_empty::to<>::result<std::tuple<>>, typical::constant<true>>);
-static_assert(std::is_same_v<typical::is_empty::to<wrap>::result<std::tuple<>>, wrapped<typical::constant<true>>>);
-static_assert(std::is_same_v<typical::is_empty::to<>::result<std::variant<>>, typical::constant<true>>);
-static_assert(std::is_same_v<typical::is_empty::to<>::result<std::tuple<int>>, typical::constant<false>>);
-static_assert(std::is_same_v<typical::is_empty::to<>::result<std::variant<int>>, typical::constant<false>>);
-
 static_assert(std::is_same_v<typical::is_template<std::tuple>::to<>::result<std::tuple<int,char>>, typical::constant<true>>);
 static_assert(std::is_same_v<typical::is_template<std::tuple>::to<wrap>::result<std::tuple<int,char>>, wrapped<typical::constant<true>>>);
 static_assert(std::is_same_v<typical::is_template<std::variant>::to<>::result<std::tuple<int,char>>, typical::constant<false>>);

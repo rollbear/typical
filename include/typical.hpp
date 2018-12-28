@@ -7,6 +7,7 @@
 #include <typical/compose.hpp>
 #include <typical/type_traits.hpp>
 #include <typical/type_predicates.hpp>
+#include <typical/list_predicates.hpp>
 #include <typical/application.hpp>
 
 #include <type_traits>
@@ -58,16 +59,6 @@ template<template<typename ...> class L, typename ... Ts>
 struct identity_template<L<Ts...>> : make<L> {
 };
 
-template<typename F>
-struct negate {
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename ...Ts>
-    using result = typename TO::template result<constant<!apply_pack<F, Ts...>::value>>;
-  };
-};
 
 template<typename F>
 struct transform {
@@ -421,30 +412,6 @@ struct count_if {
   };
 };
 
-template<typename P>
-struct any_of {
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename ...Ts>
-    using result = typename TO::template result<constant<std::disjunction_v<apply_pack<P, Ts>...>>>;
-  };
-};
-
-template<typename P>
-struct all_of {
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    using TO = detail::to<C>;
-    template<typename ... Ts>
-    using result = typename TO::template result<constant<std::conjunction_v<apply_pack<P, Ts>...>>>;
-  };
-};
-
-template<typename P>
-using none_of = negate<any_of<P>>;
 
 template <typename N>
 struct at
@@ -542,9 +509,6 @@ struct flatten
 };
 
 template <typename T>
-using has = any_of<is_same<T>>;
-
-template <typename T>
 struct index_of
 {
   template <std::size_t ... Is, typename ... Ts>
@@ -568,34 +532,6 @@ struct index_of
     using result = apply_one<TO,constant<index_func(static_cast<detail::proxy<Ts>*>(nullptr)...)>>;
   };
 };
-
-namespace detail {
-  template <typename ...>
-  struct unique;
-
-  template <typename T>
-  struct unique<T>
-  {
-    static constexpr auto value = true;
-  };
-
-  template <typename T, typename ...Ts>
-  struct unique<T, Ts...>
-  {
-    static constexpr auto value = !apply_pack<has<T>, Ts...>::value && unique<Ts...>::value;
-  };
-}
-
-struct all_unique
-{
-  using continuation = identity;
-  template <typename C = continuation>
-  struct to {
-    template <typename ... Ts>
-    using result = apply_one<C, constant<detail::unique<Ts...>::value>>;
-  };
-};
-
 
 }
 

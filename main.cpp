@@ -167,27 +167,6 @@ static_assert(std::is_same_v<apply_pack<typical::count_if<typical::is_same<int>>
   typical::constant<1>>);
 
 
-static_assert(std::is_same_v<apply_pack<typical::any_of<typical::is_reference>, int,int,double,char>,
-  typical::constant<false>>);
-static_assert(std::is_same_v<apply_pack<typical::any_of<typical::is_reference>, int,int&,double,char>,
-  typical::constant<true>>);
-static_assert(std::is_same_v<apply_pack<typical::any_of<typical::is_reference>, int&,int&,double&,char&>,
-  typical::constant<true>>);
-
-static_assert(std::is_same_v<apply_pack<typical::all_of<typical::is_reference>, int,int,double,char>,
-  typical::constant<false>>);
-static_assert(std::is_same_v<apply_pack<typical::all_of<typical::is_reference>, int,int&,double,char>,
-  typical::constant<false>>);
-static_assert(std::is_same_v<apply_pack<typical::all_of<typical::is_reference>, int&,int&,double&,char&>,
-  typical::constant<true>>);
-
-static_assert(std::is_same_v<apply_pack<typical::none_of<typical::is_reference>, int,int,double,char>,
-  typical::constant<true>>);
-static_assert(std::is_same_v<apply_pack<typical::none_of<typical::is_reference>, int,int&,double,char>,
-  typical::constant<false>>);
-static_assert(std::is_same_v<apply_pack<typical::none_of<typical::is_reference>, int&,int&,double&,char&>,
-  typical::constant<false>>);
-
 static_assert(std::is_same_v<apply_pack<typical::reverse, c<1>>,
   typical::list<c<1>>>);
 static_assert(std::is_same_v<apply_pack<typical::reverse, c<1>,c<2>>,
@@ -469,27 +448,7 @@ static_assert(std::is_same_v<apply_pack<typical::index_of<c<35>>, c<1>,c<2>,c<3>
 static_assert(std::is_same_v<apply_pack<typical::index_of<c<36>>, c<1>,c<2>,c<3>,c<4>,c<5>,c<6>,c<7>,c<8>,c<9>,c<10>,c<11>,c<12>,c<13>,c<14>,c<15>,c<16>,c<17>,c<18>,c<19>,c<20>,c<21>,c<22>,c<23>,c<24>,c<25>,c<26>,c<27>,c<28>,c<29>,c<30>,c<31>,c<32>,c<33>,c<34>,c<35>>,
   typical::constant< -1>>);
 
-static_assert(std::is_same_v<apply_pack<typical::has<int>, void, int, bool>,
-  typical::constant<true>>);
-static_assert(std::is_same_v<apply_pack<typical::has<void>, void, int, bool>,
-  typical::constant<true>>);
-static_assert(std::is_same_v<apply_pack<typical::has<bool>, void, int, bool>,
-  typical::constant<true>>);
-static_assert(std::is_same_v<apply_pack<typical::has<char>, void, int, bool>,
-  typical::constant<false>>);
-static_assert(std::is_same_v<apply_pack<typical::has<char>>,
-  typical::constant<false>>);
 
-static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<3>,c<4>>,
-  typical::constant<true>>);
-static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<3>,c<1>>,
-  typical::constant<false>>);
-static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<1>,c<3>>,
-  typical::constant<false>>);
-static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<3>,c<1>>,
-  typical::constant<false>>);
-static_assert(std::is_same_v<apply_pack<typical::all_unique, c<1>,c<2>,c<3>,c<3>>,
-  typical::constant<false>>);
 template <typename T>
 void ignore();
 struct is_even {
