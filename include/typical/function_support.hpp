@@ -49,6 +49,16 @@ struct identity {
   using result = T;
 };
 
+template <template <typename ...> class T, typename ... Ts>
+struct bind_front {
+  template <typename ... Vs>
+  struct helper {
+    using type = T<Ts..., Vs...>;
+  };
+  template <typename ... Vs>
+  using result = typename helper<Vs...>::type;
+};
+
 template<template <typename...> class T>
 struct from_type {
   using continuation = identity;

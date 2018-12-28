@@ -1,5 +1,7 @@
 #include <typical/function_support.hpp>
 
+#include <tuple>
+
 template <typename>
 struct is_int
 {
@@ -32,6 +34,10 @@ struct wrap
   template <typename T>
   using result = wrapped<T>;
 };
+
+static_assert(std::is_same_v<typical::bind_front<std::tuple, int, char>::result<unsigned, bool>,
+  std::tuple<int,char,unsigned,bool>>);
+
 static_assert(std::is_same_v<typical::from_value<is_int>::to<>::result<char>,
   typical::constant<false>>);
 static_assert(std::is_same_v<typical::from_value<is_int>::to<>::result<int>,
