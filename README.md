@@ -94,7 +94,7 @@ These are here to make it easier to work with `typical`.
 * `apply_pack<function, params...>`
    Passes `params...` to the type function `function`, which
    presents its result using the default.
-* `apply_pack´to<function, result, params...>`, same as above,
+* `apply_pack_to<function, result, params...>`, same as above,
    but where `result` takes the place of the default. For
    example, a type function that defaults to produce a
    `typical::list<...>` may instead produce a tuple by calling
@@ -104,8 +104,8 @@ These are here to make it easier to work with `typical`.
    not just `typical::list<...>`, but for example
    `std::tuple<...>`, `std::variant<...>` or a type-list
    from some other TMP library.
-* `apply´list´to<function, result, type>`, same as above, but
-  where ´`result` is used instead of the default result type.
+* `apply_list_to<function, result, type>`, same as above, but
+  where `result` is used instead of the default result type.
 * `metamorph<T1<types>,T2>` instantiates a template type 
   `T2` with the types of the `T1` instantiation. E.g.
   `metamorph<std::tuple<int,char>, std::variant>` is
@@ -206,7 +206,7 @@ using u = apply_pack<is_template<std::tuple>, std::tuple<int,char>>; // t is con
 Tells whether its input type is an instantiation of the searched for
 template type or not.
 
-### ´typical::negate<func>`
+### `typical::negate<func>`
 
 |Arity|Result type|Default continuation|Header|
 |-----|-----------|--------------------|------|
