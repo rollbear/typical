@@ -1,6 +1,6 @@
 #`<typical>`
 
-A highly composabl type based C++ template meta programming
+A highly composable type based C++ template meta programming
 library.
 
 This one is in its infancy. Please toy with it, report back,
@@ -38,6 +38,20 @@ using t = apply_pack_to<
           >;
 // t is std::tuple<int* const, char* const>
 ```
+
+## Help wanted
+
+A lot of stuff is needed to make this a fully fledged TMP library.
+Your help is much appreciated. Some obvious things:
+
+* CI setup for many different compilers.
+* Improved CMake support
+* [Metabench](http://metaben.ch/) integration
+* More and better documentation
+* More type functions
+* Are the names good enough? Are there better names that should be preferred?
+* Optimisations.
+
 ## Convenience types
 
 * `typical::constant<N>`.
