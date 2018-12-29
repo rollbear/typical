@@ -1,4 +1,4 @@
-#`<typical>`
+# `<typical>`
 
 A highly composable type based C++ template meta programming
 library.
