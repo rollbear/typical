@@ -22,12 +22,13 @@ namespace typical
 {
 template<typename F>
 struct transform {
+  using fto = typename F::template to<>;
   using continuation = make<list>;
   template <typename C = continuation>
   struct to {
     using TO = detail::to<C>;
     template<typename ... Ts>
-    using result = typename TO::template result<apply_pack<F, Ts>...>;
+    using result = typename TO::template result<typename fto::template result<Ts>...>;
   };
 };
 
