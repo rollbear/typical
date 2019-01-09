@@ -1,7 +1,7 @@
 /*
  * typical - C++ template meta programming library
  *
- * Copyright Björn Fahller 2018
+ * Copyright Björn Fahller 2018,2019
  *
  *  Use, modification and distribution is subject to the
  *  Boost Software License, Version 1.0. (See accompanying
@@ -17,24 +17,198 @@
 
 #include <typical/function_support.hpp>
 #include <typical/utilities.hpp>
+
 namespace typical
 {
-
 namespace detail {
-
-template<template<typename ...> class, typename, typename>
-struct make_n_;
-
-template<template<typename ...> class C, typename T, std::size_t ... Is>
-struct make_n_<C, T, std::index_sequence<Is...>> {
   template<std::size_t>
-  using made = T;
-  using type = C<made<Is>...>;
-};
+  using make_voidptr = void*;
 
-template<template<typename ...> class C, typename N, typename T>
-using make_n = typename make_n_<C, T, std::make_index_sequence<N::value>>::type;
+  template<typename TO, std::size_t N>
+  struct drop_front_helper
+  {
+    template <typename> struct inner;
+    template <std::size_t ... Is>
+    struct inner<std::index_sequence<Is...>>
+    {
+      template <typename ... Ts>
+      static typename TO::template result<Ts...> func(make_voidptr<Is>..., detail::proxy<Ts> *...);
+    };
+    template <typename ... Ts>
+    using type = decltype(inner<std::make_index_sequence<N>>::func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+  template<typename TO>
+  struct drop_front_helper<TO, 0>
+  {
+    template<typename ... Ts>
+    using type = typename TO::template result<Ts...>;
+  };
+
+  template<typename TO>
+  struct drop_front_helper<TO, 1>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...> func(void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+  template<typename TO>
+  struct drop_front_helper<TO, 2>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...> func(void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+  template<typename TO>
+  struct drop_front_helper<TO, 3>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...> func(void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+  template<typename TO>
+  struct drop_front_helper<TO, 4>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...> func(void*, void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+  template<typename TO>
+  struct drop_front_helper<TO, 5>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...> func(void*, void*, void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+    template<typename TO>
+  struct drop_front_helper<TO, 6>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...> func(void*, void*, void*, void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+  template<typename TO>
+  struct drop_front_helper<TO, 7>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...> func(void*, void*, void*, void*, void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+    template<typename TO>
+  struct drop_front_helper<TO, 8>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...>
+    func(void*, void*, void*, void*, void*, void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+      template<typename TO>
+  struct drop_front_helper<TO, 9>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...>
+    func(void*, void*, void*, void*, void*, void*, void*, void*,
+         void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+        template<typename TO>
+  struct drop_front_helper<TO, 10>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...>
+    func(void*, void*, void*, void*, void*, void*, void*, void*,
+         void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+          template<typename TO>
+  struct drop_front_helper<TO, 11>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...>
+    func(void*, void*, void*, void*, void*, void*, void*, void*,
+         void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+            template<typename TO>
+  struct drop_front_helper<TO, 12>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...>
+    func(void*, void*, void*, void*, void*, void*, void*, void*,
+         void*, void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+              template<typename TO>
+  struct drop_front_helper<TO, 13>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...>
+    func(void*, void*, void*, void*, void*, void*, void*, void*,
+         void*, void*, void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+                template<typename TO>
+  struct drop_front_helper<TO, 14>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...>
+    func(void*, void*, void*, void*, void*, void*, void*, void*,
+         void*, void*, void*, void*, void*, void*, detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
+  template<typename TO>
+  struct drop_front_helper<TO, 15>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...>
+    func(void*, void*, void*, void*, void*, void*, void*, void*,
+         void*, void*, void*, void*, void*, void*, void*,
+         detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+  template<typename TO>
+  struct drop_front_helper<TO, 16>
+  {
+    template <typename ... Ts>
+    static typename TO::template result<Ts...>
+    func(void*, void*, void*, void*, void*, void*, void*, void*,
+         void*, void*, void*, void*, void*, void*, void*, void*,
+         detail::proxy<Ts>*...);
+    template<typename ... Ts>
+    using type = decltype(func(static_cast<detail::proxy<Ts>*>(nullptr)...));
+  };
+
 }
+
 template <typename N>
 struct drop_front
 {
@@ -43,18 +217,8 @@ struct drop_front
   struct to {
     using TO = detail::to<C>;
 
-    template<typename>
-    struct helper;
-
-    template<typename ... Vs>
-    struct helper<list<Vs...>> {
-      template<typename ... Ts>
-      static typename TO::template result<Ts...> func(Vs..., detail::proxy<Ts> *...);
-    };
-
-    template<typename ... Ts>
-    using result = decltype(helper<detail::make_n<list, N, const void *>>::func(
-      static_cast<detail::proxy<Ts> *>(nullptr)...));
+    template <typename ... Ts>
+    using result = typename detail::drop_front_helper<TO, N::value>::template type<Ts...>;
   };
 };
 
